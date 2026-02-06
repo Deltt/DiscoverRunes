@@ -1,0 +1,492 @@
+:root {
+    --bg-gradient-color-1: #332E25;
+    --bg-gradient-color-2: #110f0c;
+    --bg-gradient: linear-gradient(var(--bg-gradient-color-1), var(--bg-gradient-color-2));
+
+    --text-color: #f3f1f7;
+
+    --headline-text-color: var(--text-color);
+    --headline-container-color: linear-gradient(#898E23, #5c5f18);
+    --sub-headline-text-color: #BCB82A;
+
+    --button-color: #898E23;
+    --button-text-color: #dee2de;
+
+    --menu-bar-color: #444444;
+
+    --headline-font-size: 1.2rem;
+    --text-font-size: 0.5rem;
+    --sub-headline-font-size: 0.7rem;
+    --button-font-size: 0.7rem;
+
+    /* --page-background: #dd98d4;
+    --center-container-background: #6ccf63;
+    --center-container-border-thickness: 1px;
+    --text-container-background: #a425d6; */
+}
+
+.hidden {
+    display: none !important;
+}
+
+@font-face {
+    font-family: "Freight";
+    src: url("fonts/FreightMacro-Medium.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Rethink";
+    src: url("fonts/RethinkSans-VariableFont_wght.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Futhark";
+    src: url("fonts/Futhark-Regular.ttf");
+}
+
+@font-face {
+    font-family: "gre";
+    src: url("fonts/GriechischeFont3-Regular.ttf");
+}
+
+@font-face {
+    font-family: "ven";
+    src: url("fonts/VenetischeSchrift3-Regular.ttf");
+}
+
+@font-face {
+    font-family: "lat";
+    src: url("fonts/LateinischeSchrift-Regular.ttf");
+}
+
+/* High Level Stuff */
+
+html,
+body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    background: black;
+    overflow: hidden;
+    font-family: "Rethink", sans-serif;
+    user-select: none;
+    color: var(--text-color);
+    font-size: calc(100vh / 40);
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#app {
+    aspect-ratio: 9 / 16;
+
+    height: 100vh;
+    width: auto;
+
+    /* max-width: calc(100vh * 9 / 16);
+    max-height: 100vh; */
+
+    /*background: #111;*/
+    background: var(--bg-gradient);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Page */
+
+.page {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background: var(--page-background);
+    will-change: opacity, transform;
+}
+
+/* hidden by default */
+.page:not(.active) {
+    display: none;
+}
+
+.page.active {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+/* Menu Bar */
+
+#menu-bar {
+    flex: 0 0 2%;
+    /* takes 10% of app height */
+    height: 4%;
+    width: 100%;
+    background: var(--menu-bar-color);
+    /* debug color */
+    justify-content: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    /* or space-around / space-evenly */
+    align-items: center;
+    padding: 1rem 0;
+}
+
+.menu-item-container {
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    margin: 0 2rem;
+}
+
+.menu-item-image {
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    /* or 'contain' */
+    display: block;
+}
+
+/* Layout Helpers */
+
+.top-spacer {
+    height: 1.5rem;
+}
+
+.center-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* horizontal centering */
+    align-items: center;
+    /* vertical centering */
+    width: 100%;
+    background: var(--center-container-background);
+    border: var(--center-container-border-thickness) solid black;
+}
+
+.right-container {
+    justify-content: right;
+    width: 90%;
+}
+
+/* Text Elements */
+
+.headline-container {
+    background: var(--headline-container-color);
+    padding: 0.16rem 0.7rem;
+    margin: 0.5rem 0rem;
+    border-radius: 0.5rem;
+}
+
+.headline {
+    margin: 0;
+    font-family: "Freight", sans-serif;
+    font-size: var(--headline-font-size);
+    font-weight: 100;
+}
+
+.sub-headline {
+    margin: 0;
+    color: var(--sub-headline-text-color);
+    font-family: "Freight", sans-serif;
+    font-size: var(--sub-headline-font-size);
+    margin: 0.5rem 0rem;
+}
+
+.text-container {
+    width: 85%;
+    background: var(--text-container-background);
+    margin: 0.5rem 0rem;
+}
+
+p {
+    font-size: var(--text-font-size);
+    /* margin: 0; */
+    /* margin-bottom: 0.5rem; */
+}
+
+/* Buttons */
+
+.button-spacer {
+    padding-top: 1rem;
+}
+
+
+.advance-button {
+    appearance: none;
+    -webkit-appearance: none;
+
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.2rem;
+    background-color: var(--button-color);
+    border: none;
+    cursor: pointer;
+    transform: skew(-15deg, 0deg);
+    font-size: var(--button-font-size);
+    font-family: "Rethink", sans-serif;
+    color: var(--button-text-color);
+    box-shadow: 0.2rem 0.2rem #00000085;
+}
+
+
+/* Futhark Overview */
+
+.futhark-overview-grid-container {
+    margin: 0.5rem 0rem;
+    width: 75%;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    /* 5 columns */
+    gap: 0.5rem;
+    /* spacing between elements */
+    /* background: red; */
+    justify-items: center;
+    /* optional: center items in cell horizontally */
+    align-items: center;
+    /* optional: center items vertically */
+    position: relative;
+}
+
+.futhark-overview-grid-tile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.4rem;
+    height: 2.5rem;
+    padding-top: 0.5rem;
+    width: 2.0rem;
+    /* fills the grid cell width */
+    background: var(--button-color);
+    box-shadow: 0.2rem 0.2rem #00000085;
+}
+
+.futhark-overview-grid-tile-disabled {
+    opacity: 50%;
+}
+
+.futhark-overview-grid-letter {
+    color: var(--text-color);
+    font-size: 2rem;
+    font-family: "Futhark";
+    font-weight: 500;
+}
+
+#futhark-overview-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: 90%;
+    height: 90%;
+    border-radius: 0.5rem;
+
+    background: rgba(var(--bg-gradient-color-1), 0.25);
+    background-color: color-mix(in srgb, var(--bg-gradient-color-1) 95%, transparent 5%);
+    border: 2px solid var(--button-color);
+    pointer-events: auto;
+    z-index: 10;
+
+    /* 👇 center overlay contents */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* horizontal */
+    align-items: center;
+    /* vertical */
+}
+
+.futhark-overview-overlay-spacer {
+    height: 0.5rem;
+}
+
+.futhark-overview-overlay-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#futhark-overview-overlay-closebox {
+    position: absolute;
+    /* stays in top-right corner */
+    top: 5%;
+    right: 5%;
+    width: 1rem;
+    height: 1rem;
+
+    background: var(--button-color);
+    border: 1px solid var(--text-color);
+    border-radius: 100px;
+
+    display: flex;
+    /* make it a flex container */
+    justify-content: center;
+    /* horizontal centering */
+    align-items: center;
+    /* vertical centering */
+    text-align: center;
+    /* optional for text */
+    font-size: 0.5rem;
+}
+
+#futhark-overview-overlay-rune {
+    font-size: 4rem;
+    font-family: "Futhark";
+}
+
+.futhark-overview-overlay-attribute {
+    font-size: var(--text-font-size);
+}
+
+.futhark-overview-overlay-text {
+    font-size: var(2rem);
+}
+
+/* Origin */
+
+.rune-origin {
+    width: 90%;
+    height: 18rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    object-fit: fill;
+}
+
+.rune-origin-placeholder {
+    height: 100%;
+}
+
+/* Quiz */
+
+#quiz-top {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* background: #BCB82A; */
+    width: 85%;
+    padding: 2rem 0;
+    font-family: "Futhark";
+}
+
+#quiz-bottom {
+    grid-template-columns: repeat(4, 1fr);
+    width: 50%;
+}
+
+.quiz-top-tile {
+    height: 3rem;
+    width: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    box-sizing: border-box;
+    border: 2px solid transparent;
+    transition: box-shadow 0.35s ease, border-color 0.35s ease, color 0.35s ease;
+}
+
+.quiz-bottom-tile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.4rem;
+    height: 3.2rem;
+    width: 2.0rem;
+    /* fills the grid cell width */
+    background: var(--button-color);
+    font-size: 2rem;
+    box-shadow: 0.2rem 0.2rem #00000085;
+}
+
+.correct-glow {
+    box-shadow: 0 0 12px #00ff88;
+    border-color: #00ff88;
+    color: #00ff88;
+}
+
+.wrong-glow {
+    box-shadow: 0 0 12px #ff9f1c;
+    border-color: #ff9f1c;
+    color: #ff9f1c;
+}
+
+/* Wheel */
+.wheel-container {
+    margin: 0.5rem 0;
+    /* background: #BCB82A; */
+    width: 85%;
+    height: 16rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.wheel-fixed {
+    height: 15rem;
+    width: 3rem;
+    margin: 0 0.5rem;
+    background: #58585862;
+    border-radius: 0.4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: "Futhark";
+    font-size: 2.5rem;
+    padding-top: 0.3rem;
+}
+
+#wheel-main {
+    height: 20rem;
+    width: 3rem;
+    margin: 0 0.5rem;
+    background: #ff9f1c;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(to bottom,
+            transparent 0%,
+            transparent 10%,
+            var(--button-color) 50%,
+            transparent 90%,
+            transparent 100%);
+
+    -webkit-mask-image: linear-gradient(to bottom,
+            transparent 0%,
+            transparent 10%,
+            black 50%,
+            transparent 90%,
+            transparent 100%);
+    mask-image: linear-gradient(to bottom,
+            transparent 0%,
+            transparent 10%,
+            black 50%,
+            transparent 90%,
+            transparent 100%);
+}
+
+.wheel-main-entry {
+    position: absolute;
+
+    /* X positioning */
+    left: 50%;
+    transform: translateX(-50%);
+
+    /* size */
+    width: 100%;
+    height: 3rem;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-family: "Futhark";
+    font-size: 3.5rem;
+}

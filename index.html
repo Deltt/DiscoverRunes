@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>App</title>
+</head>
+
+<body>
+    <div id="app">
+        <!-- all pages / UI go here -->
+        <div id="start" class="page">
+            <div class="top-spacer"></div>
+
+            <div class="center-container">
+                <div class="headline-container">
+                    <h1 class="headline">Runen</h1>
+                </div>
+            </div>
+
+            <div class="center-container">
+                <p class="sub-headline">Eine Schrift nach römischem Vorbild?</p>
+            </div>
+
+            <div class="center-container">
+                <div class="text-container">
+                    <p>Schrift begegnet uns heute überall: in
+                        Nachrichten, Büchern oder eben in diesem Text.
+                        Zur Zeit der Germanen war das anders. Sie
+                        lebten in einer mündlich geprägten Kultur, in der
+                        Worte schnell wieder verschwanden, sobald
+                        man sie aussprach. Das änderte sich ab der
+                        Mitte des 2. Jahrhunderts n. Chr. Ab diesem
+                        Zeitpunkt liegen uns Schriftzeugnisse vor, die die
+                        Germanen in ihrer eigenen Schrift verfassten:
+                        den Runen.</p>
+                    <p>Die Einführung von Schrift war dabei mehr als
+                        nur ein praktisches Werkzeug. Sie machte
+                        Gedanken und Namen dauerhaft sichtbar und
+                        verlieh dem Wort – und dem, der es schreiben
+                        konnte – eine besondere Macht. Nicht ohne
+                        Grund wurde der Ursprung von Schrift in vielen
+                        Kulturen mit Göttern und Mythen verknüpft.
+                        Auch bei den Runen stellt sich die Frage, woher
+                        die Germanen die Idee zu einer eigenen Schrift
+                        nahmen. War das lateinische Alphabet der
+                        Römer ihr Vorbild oder steckte etwas ganz
+                        anderes dahinter?</p>
+                </div>
+            </div>
+
+            <div class="center-container button-spacer"></div>
+
+            <div class="center-container">
+                <button class="advance-button" data-next="futhark">Finde es heraus!</button>
+            </div>
+        </div>
+
+        <div id="futhark" class="page">
+            <div class="top-spacer"></div>
+
+            <div class="center-container">
+                <div class="headline-container">
+                    <h1 class="headline">Das Ältere Futhark</h1>
+                </div>
+            </div>
+
+            <div class="center-container">
+                <div class="text-container">
+                    <p>Das Scrhriftsystem der Germanen trägt den Namen "Älteres Futhark" - benannt nach den ersten sechs
+                        Runen dieser Reihe. Es umfasste 24 Runen und wurde bis etwa 700 n. Chr. verwendet, before es vom
+                        Jüngeren Futhark der Wikingerzeit abgelöst wurde, das nur noch aus 16 Runen bestand.</p>
+                </div>
+            </div>
+
+            <div class="center-container">
+                <div class="futhark-overview-grid-container">
+                    <div id="futhark-overview-overlay">
+                        <div class="futhark-overview-overlay-content">
+                            <div id="futhark-overview-overlay-rune">s</div>
+                            <div class="futhark-overview-overlay-attribute">Latein:</div>
+                            <div id="overlay-latin-letter" class="futhark-overview-overlay-text">Dies ist ein F.</div>
+                            <div class="futhark-overview-overlay-spacer"></div>
+                            <div class="futhark-overview-overlay-attribute">Bedeutung:</div>
+                            <div id="overlay-meaning" class="futhark-overview-overlay-text">Vieh.</div>
+                        </div>
+
+                        <div id="futhark-overview-overlay-closebox">X</div>
+                    </div>
+
+                    <div class="futhark-overview-grid-tile futhark-overview-grid-letter" data-rune_index="0">f</div>
+                    <div class="futhark-overview-grid-tile futhark-overview-grid-letter" data-rune_index="1">u</div>
+                    <div class="futhark-overview-grid-tile futhark-overview-grid-letter" data-rune_index="2">x</div>
+                    <div class="futhark-overview-grid-tile futhark-overview-grid-letter" data-rune_index="3">a</div>
+
+                    <div class="futhark-overview-grid-tile futhark-overview-grid-letter" data-rune_index="4">r</div>
+                    <div class="futhark-overview-grid-tile futhark-overview-grid-letter" data-rune_index="5">k</div>
+                    <div class="futhark-overview-grid-tile futhark-overview-grid-letter" data-rune_index="6">g</div>
+                    <div class="futhark-overview-grid-tile futhark-overview-grid-letter" data-rune_index="7">w</div>
+
+                    <div class="futhark-overview-grid-tile futhark-overview-grid-letter" data-rune_index="8">h</div>
+                    <div class="futhark-overview-grid-tile futhark-overview-grid-letter" data-rune_index="9">n</div>
+                    <div class="futhark-overview-grid-tile futhark-overview-grid-letter" data-rune_index="10">i</div>
+                    <div class="futhark-overview-grid-tile futhark-overview-grid-letter" data-rune_index="11">j</div>
+
+                    <div class="futhark-overview-grid-tile futhark-overview-grid-letter" data-rune_index="12">c</div>
+                    <div class="futhark-overview-grid-tile futhark-overview-grid-letter" data-rune_index="13">p</div>
+                    <div class="futhark-overview-grid-tile futhark-overview-grid-letter" data-rune_index="14">z</div>
+                    <div class="futhark-overview-grid-tile futhark-overview-grid-letter" data-rune_index="15">s</div>
+
+                    <div class="futhark-overview-grid-tile futhark-overview-grid-letter" data-rune_index="16">t</div>
+                    <div class="futhark-overview-grid-tile futhark-overview-grid-letter" data-rune_index="17">b</div>
+                    <div class="futhark-overview-grid-tile futhark-overview-grid-letter" data-rune_index="18">e</div>
+                    <div class="futhark-overview-grid-tile futhark-overview-grid-letter" data-rune_index="19">m</div>
+
+                    <div class="futhark-overview-grid-tile futhark-overview-grid-letter" data-rune_index="20">l</div>
+                    <div class="futhark-overview-grid-tile futhark-overview-grid-letter" data-rune_index="21">q</div>
+                    <div class="futhark-overview-grid-tile futhark-overview-grid-letter" data-rune_index="22">d</div>
+                    <div class="futhark-overview-grid-tile futhark-overview-grid-letter" data-rune_index="23">o</div>
+
+                </div>
+            </div>
+
+            <div class="center-container">
+                <div class="text-container">
+                    <p>Wie unser heutiges Alphabet einer festen Reihenfolge folgt, sind auch die Runen in einer
+                        bestimmten Abfolge angeordnert. In dieser Reihenfolde unterscheidert sich das Runensystem
+                        deutlich von anderen antiken Alphabesten. Dennoch sind sich Forschende einig, dass die
+                        Runenschrift nicht frei erfunden wurde, sondern auf mindestens einem anderen Alphabet basiert.
+                        Doch welches war dieses Vorbild?</p>
+                </div>
+            </div>
+
+            <div class="center-container button-spacer"></div>
+
+            <div class="center-container">
+                <button class="advance-button" data-next="origin">Erforsche die Herkunft der Runen!</button>
+            </div>
+            <div class="center-container">
+                <button class="advance-button" data-next="quiz">Minispiel: Errate die Runen!</button>
+            </div>
+        </div>
+
+        <div id="origin" class="page">
+            <div class="top-spacer"></div>
+
+            <div class="center-container">
+                <div class="headline-container">
+                    <h1 class="headline">Wo kommen die Runen her?</h1>
+                </div>
+            </div>
+
+            <div class="center-container">
+                <div class="text-container">
+                    <p>Die Suche nach ihrem Ursprung führt tief in die verzweigte Geschichte der Schrift. Die monderne
+                        Forschung ist sich einig: Kein Alphabet entsteht isoliert - sie alle sind Teil eines großen,
+                        weit zurückliegenden Stammbaums. Doch an welcher Stelle zweigt die germanische Runenschrift von
+                        diesem Stamm ab? Während die Entwicklung</p>
+                </div>
+            </div>
+
+            <div class="center-container">
+                <div class="rune-origin">
+                    <img class="rune-origin-placeholder" src="imgs/tree_placeholder.png">
+                </div>
+            </div>
+
+            <!-- <div class="center-container">
+                <div class="text-container">
+                    <p>This is a test text that will probably not be used any further.</p>
+                    <p>This is a test text that will probably not be used any further.</p>
+                </div>
+            </div> -->
+
+            <div class="center-container button-spacer"></div>
+
+            <div class="center-container">
+                <button class="advance-button" data-next="start">Weiter!</button>
+            </div>
+            <div class="center-container">
+                <button class="advance-button" data-next="wheel">Minispiel: Vergleiche die Alphabete!</button>
+            </div>
+        </div>
+
+        <div id="quiz" class="page">
+            <div class="top-spacer"></div>
+
+            <div class="center-container">
+                <div class="headline-container">
+                    <h1 class="headline">Erratet die Runen!</h1>
+                </div>
+            </div>
+
+            <!-- <div class="center-container">
+                <p class="sub-headline">Schreibe mit Runen.</p>
+            </div> -->
+
+            <div class="center-container">
+                <div class="text-container">
+                    <p>Manche Runen ähneln unseren lateinischen Buchstaben stark, andere weniger. Probiert es selbst
+                        aus: Wie würde man dieses Wort in Runen schreiben?</p>
+                </div>
+            </div>
+
+            <div class="center-container">
+                <img src="imgs/kamm.png" style="width: 8rem; padding-top: 2rem;">
+            </div>
+
+            <div class="center-container">
+                <div id="quiz-top">
+                </div>
+                <div class="futhark-overview-grid-container" id="quiz-bottom">
+                </div>
+            </div>
+
+            <!-- <div class="center-container button-spacer"></div>
+
+            <div class="center-container">
+                <button class="advance-button" data-next="futhark">Advance</button>
+            </div> -->
+        </div>
+
+        <div id="wheel" class="page">
+            <div class="top-spacer"></div>
+
+            <div class="center-container">
+                <div class="headline-container">
+                    <h1 class="headline">Vergleicht die Alphabete!</h1>
+                </div>
+            </div>
+
+            <!-- <div class="center-container">
+                <p class="sub-headline">Vergleicht die Alphabete!</p>
+            </div> -->
+
+            <div class="center-container">
+                <div class="text-container">
+                    <p>Um herauszufinden, von welchem Alphabet die Runen abstammen, lassen sich die Schriftsysteme
+                        miteinander vergleichen. Dabei zeigt sich: Manche Runen ähneln den Zeichen anderer Alphabete und
+                        stehen sogar für denselben Laut. Andere wiederum sehen zwar gleich aus, bezeichnen jedoch einen
+                        anderen Laut. Probiert es selbst aus. Konnt ihr erraten, welche Zeichen den Runen entsprechen?
+                    </p>
+                </div>
+            </div>
+
+            <div class="center-container">
+                <div class="wheel-container">
+                    <div class="wheel-fixed" data-font="pho">f</div>
+                    <div class="wheel-fixed" data-font="gre">f</div>
+                    <div id="wheel-main">
+                        <div class="wheel-main-entry">f</div>
+                        <div class="wheel-main-entry">f</div>
+                        <div class="wheel-main-entry">f</div>
+                        <div class="wheel-main-entry">f</div>
+                        <div class="wheel-main-entry">f</div>
+                        <div class="wheel-main-entry">f</div>
+                        <div class="wheel-main-entry">f</div>
+                    </div>
+                    <div class="wheel-fixed" data-font="ven">f</div>
+                    <div class="wheel-fixed" data-font="lat">f</div>
+                </div>
+            </div>
+
+            <div class="center-container button-spacer"></div>
+
+            <div class="center-container">
+                <button class="advance-button" data-next="origin">Advance</button>
+            </div>
+        </div>
+
+        <div id="menu-bar">
+            <div class="menu-item-container">
+                <img src="imgs/back.png" class="menu-item-image" id="back-button">
+            </div>
+            <div class="menu-item-container">
+                <img src="imgs/home.png" class="menu-item-image" id="home-button">
+            </div>
+            <div class="menu-item-container">
+                <img src="imgs/Sprache_EN_bright.svg" class="menu-item-image">
+            </div>
+        </div>
+
+    </div>
+
+    <script src="scripts.js"></script>
+</body>
+
+</html>
