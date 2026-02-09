@@ -172,7 +172,7 @@ function switchPage(targetId) {
 
 
 // Attach to buttons
-document.querySelectorAll(".advance-button").forEach(btn => {
+document.querySelectorAll(".interaction-change-page").forEach(btn => {
 	btn.addEventListener("click", () => {
 		const targetId = btn.dataset.next;
 		switchPage(targetId);
@@ -298,20 +298,17 @@ function checkAnswer() {
 
 quizBottomElements.forEach(div => {
 	div.addEventListener("click", () => {
-		// Prevent overflow
 		if (currentTopElement >= quizTopElements.length) return;
 		if (div.classList.contains("futhark-overview-grid-tile-disabled")) return;
 
 		const letter = div.dataset.property;
 		div.classList.add("futhark-overview-grid-tile-disabled");
 
-		// Fill top slot
 		const topEl = quizTopElements[currentTopElement];
 		topEl.textContent = letter;
 
 		currentTopElement++;
 
-		// If filled all slots → check
 		if (currentTopElement === quizTopElements.length) {
 			checkAnswer();
 		}
@@ -319,38 +316,53 @@ quizBottomElements.forEach(div => {
 });
 
 // Wheel
-const wheelLetter = "g";
+const wheelLetter = "r";
 let selectedLetter = "a";
+let selectedLetterElement;
+const wheelCheckButton = document.getElementById("wheel-check-button");
+let freezeWheel = false;
 
-document.querySelectorAll(".wheel-fixed").forEach(btn => {
-    // Set the letter content
-    btn.textContent = wheelLetter;
-    
-    // Get the font name from data-font="..."
-    const fontName = btn.dataset.font;
-    
-    // Apply it to the style object
-    if (fontName) {
-        btn.style.fontFamily = fontName;
-    }
+wheelCheckButton.addEventListener("click", () => {
+	if (selectedLetter == wheelLetter) {
+		freezeWheel = true;
+		selectedLetterElement.style.transition = "";
+		applyGlow(selectedLetterElement, {
+			className: "correct-glow"
+		});
+	}
+	else {
+		selectedLetterElement.style.transition = "";
+		applyGlow(selectedLetterElement, {
+			className: "wrong-glow",
+			duration: 300
+		});
+	}
 });
 
-const stepRem = 4;      
-const entryOffset = -3.25; 
+document.querySelectorAll(".wheel-fixed").forEach(btn => {
+	btn.textContent = wheelLetter;
+	const fontName = btn.dataset.font;
+	if (fontName) {
+		btn.style.fontFamily = fontName;
+	}
+});
+
+const stepRem = 4;
+const entryOffset = -3.25;
 const parent = document.getElementById("wheel-main");
 const entries = Array.from(document.querySelectorAll(".wheel-main-entry"));
-const totalHeight = entries.length * stepRem; 
+const totalHeight = entries.length * stepRem;
 
 let basePositions = entries.map((_, i) => entryOffset + i * stepRem);
-let currentIndices = entries.map((_, i) => i); 
+let currentIndices = entries.map((_, i) => i);
 
-// Initialize
+// Initialize entries
 entries.forEach((el, i) => {
-    el.style.position = "absolute";
-    el.style.left = "50%";
-    el.textContent = futharkLetters[currentIndices[i]];
-    el.style.transform = `translate(-50%, ${basePositions[i]}rem)`;
-    el.dataset.prevPos = basePositions[i];
+	el.style.position = "absolute";
+	el.style.left = "50%";
+	el.textContent = futharkLetters[currentIndices[i]];
+	el.style.transform = `translate(-50%, ${basePositions[i]}rem)`;
+	el.dataset.prevPos = basePositions[i];
 });
 
 let isDragging = false;
@@ -359,83 +371,132 @@ let dragOffsetRem = 0;
 
 const getLoopedPos = (pos) => ((pos - entryOffset) % totalHeight + totalHeight) % totalHeight + entryOffset;
 
-// 🛠️ The "Single Source of Truth" Update Function
 function updatePositions(offset, isSnapping = false) {
-    const centerSlotPos = entryOffset + (3 * stepRem);
+	if (freezeWheel) return;
+	const centerSlotPos = entryOffset + (3 * stepRem);
 
-    entries.forEach((el, i) => {
-        const rawPos = basePositions[i] + offset;
-        const loopedPos = getLoopedPos(rawPos);
-        
-        const prev = parseFloat(el.dataset.prevPos);
-        const diff = loopedPos - prev;
+	entries.forEach((el, i) => {
+		const rawPos = basePositions[i] + offset;
+		const loopedPos = getLoopedPos(rawPos);
 
-        // Wrap Detection
-        if (diff < -totalHeight / 2) {
-            currentIndices[i] = (currentIndices[i] + entries.length) % futharkLetters.length;
-            el.textContent = futharkLetters[currentIndices[i]];
-        } else if (diff > totalHeight / 2) {
-            currentIndices[i] = (currentIndices[i] - entries.length + futharkLetters.length) % futharkLetters.length;
-            el.textContent = futharkLetters[currentIndices[i]];
-        }
+		const prev = parseFloat(el.dataset.prevPos);
+		const diff = loopedPos - prev;
 
-        el.style.transform = `translate(-50%, ${loopedPos}rem)`;
-        el.dataset.prevPos = loopedPos;
+		// Wrap Detection
+		if (diff < -totalHeight / 2) {
+			currentIndices[i] = (currentIndices[i] + entries.length) % futharkLetters.length;
+			el.textContent = futharkLetters[currentIndices[i]];
+		} else if (diff > totalHeight / 2) {
+			currentIndices[i] = (currentIndices[i] - entries.length + futharkLetters.length) % futharkLetters.length;
+			el.textContent = futharkLetters[currentIndices[i]];
+		}
 
-        if (isSnapping && Math.abs(loopedPos - centerSlotPos) < 0.1) {
-            selectedLetter = el.textContent;
-        }
-    });
+		el.style.transform = `translate(-50%, ${loopedPos}rem)`;
+		el.dataset.prevPos = loopedPos;
+
+		if (isSnapping && Math.abs(loopedPos - centerSlotPos) < 0.1) {
+			selectedLetter = el.textContent;
+			selectedLetterElement = el;
+		}
+	});
 }
 
 parent.addEventListener("pointerdown", e => {
-    isDragging = true;
-    startY = e.clientY;
-    entries.forEach(el => el.style.transition = "none"); 
-    parent.setPointerCapture(e.pointerId);
+	isDragging = true;
+	startY = e.clientY;
+	entries.forEach(el => el.style.transition = "none");
+	parent.setPointerCapture(e.pointerId);
 });
 
 parent.addEventListener("pointermove", e => {
-    if (!isDragging) return;
-    dragOffsetRem += (e.clientY - startY) / 16;
-    startY = e.clientY;
-    updatePositions(dragOffsetRem);
+	if (!isDragging) return;
+	dragOffsetRem += (e.clientY - startY) / 16;
+	startY = e.clientY;
+	updatePositions(dragOffsetRem);
 });
 
 function snap() {
-    if (!isDragging) return;
-    isDragging = false;
+	if (!isDragging) return;
+	isDragging = false;
 
-    const snappedDragOffset = Math.round(dragOffsetRem / stepRem) * stepRem;
+	const snappedDragOffset = Math.round(dragOffsetRem / stepRem) * stepRem;
 
-    entries.forEach((el, i) => {
-        const rawPos = basePositions[i] + snappedDragOffset;
-        const loopedPos = getLoopedPos(rawPos);
-        
-        // 1️⃣ Check if this element needs to "teleport" during the snap
-        // If the distance between current visual pos and target is huge, it's a wrap.
-        const currentTransformY = parseFloat(el.style.transform.split(',')[1]) || 0;
-        const distance = Math.abs(loopedPos - currentTransformY);
+	entries.forEach((el, i) => {
+		const rawPos = basePositions[i] + snappedDragOffset;
+		const loopedPos = getLoopedPos(rawPos);
+		const currentTransformY = parseFloat(el.style.transform.split(',')[1]) || 0;
+		const distance = Math.abs(loopedPos - currentTransformY);
 
-        if (distance > totalHeight / 2) {
-            // Disable transition so it jumps instantly "backstage"
-            el.style.transition = "none";
-        } else {
-            // Normal slide for elements staying on screen
-            el.style.transition = "transform 0.2s cubic-bezier(.2, .7, .3, 1)";
-        }
-    });
+		if (distance > totalHeight / 2) {
+			el.style.transition = "none";
+		} else {
+			el.style.transition = "transform 0.2s cubic-bezier(.2, .7, .3, 1)";
+		}
+	});
 
-    // 2️⃣ Trigger the update (the browser applies the styles above)
-    updatePositions(snappedDragOffset, true);
+	updatePositions(snappedDragOffset, true);
 
-    // 3️⃣ Commit positions
-    basePositions = basePositions.map(pos => getLoopedPos(pos + snappedDragOffset));
-    dragOffsetRem = 0;
+	basePositions = basePositions.map(pos => getLoopedPos(pos + snappedDragOffset));
+	dragOffsetRem = 0;
 
-    console.log("Selected:", selectedLetter);
+	console.log("Selected:", selectedLetter);
 }
 
 parent.addEventListener("pointerup", snap);
 parent.addEventListener("pointercancel", snap);
 parent.addEventListener("pointerleave", snap);
+
+
+// Functional stuff
+
+/**
+ * Applies a glow class to one or more elements.
+ *
+ * @param {Element|Element[]} elements - Single element or array
+ * @param {Object} options
+ * @param {string} options.className - CSS class to apply (e.g. "correct-glow")
+ * @param {number} [options.duration] - Auto-remove after ms (optional)
+ * @param {boolean} [options.waitForTransition=false] - Wait for transitionend
+ * @param {string} [options.transitionProperty="box-shadow"] - Property to wait for
+ * @param {Function} [options.onComplete] - Callback after done
+ */
+function applyGlow(elements, {
+	className,
+	duration,
+	waitForTransition = false,
+	transitionProperty = "box-shadow",
+	onComplete
+}) {
+	const els = Array.isArray(elements) ? elements : [elements];
+
+	let finished = 0;
+	const total = els.length;
+
+	const done = () => {
+		finished++;
+		if (finished === total && onComplete) {
+			onComplete();
+		}
+	};
+
+	els.forEach(el => {
+		el.classList.add(className);
+
+		if (waitForTransition) {
+			const onEnd = (e) => {
+				if (e.propertyName !== transitionProperty) return;
+				el.removeEventListener("transitionend", onEnd);
+				done();
+			};
+			el.addEventListener("transitionend", onEnd);
+		} else {
+			done();
+		}
+	});
+
+	if (duration != null) {
+		setTimeout(() => {
+			els.forEach(el => el.classList.remove(className));
+		}, duration);
+	}
+}
