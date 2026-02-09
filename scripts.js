@@ -1,28 +1,26 @@
 const futharkLetters = [
-	"f",  // 0
-	"u",  // 1
-	"x",  // 2
-	"a",  // 3
-	"r",  // 4
-	"k",  // 5
-	"g",  // 6
-	"w",  // 7
-	"h",  // 8
-	"n",  // 9
-	"i",  // 10
-	"j",  // 11
-	"c",  // 12
-	"p",  // 13
-	"z",  // 14
-	"s",  // 15
-	"t",  // 16
-	"b",  // 17
-	"e",  // 18
-	"m",  // 19
-	"l",  // 20
-	"q",  // 21
-	"d",  // 22
-	"o"   // 23
+	"f", "u", "x", "a", "r", "k", "g", "w", "h", "n", "i", "j",
+	"c", "p", "z", "s", "t", "b", "e", "m", "l", "q", "d", "o"
+];
+
+const phoLetters = [
+	"f", "u", "x", "a", "r", "k", "g", "w", "h", "n", "i", "j",
+	"c", "p", "z", "s", "t", "b", "e", "m", "l", "q", "d", "o"
+];
+
+const greLetters = [
+	"f", "u", "x", "a", "r", "k", "g", "w", "h", "n", "i", "j",
+	"c", "p", "z", "s", "t", "b", "e", "m", "l", "q", "d", "o"
+];
+
+const itaLetters = [
+	"f", "u", "x", "a", "r", "k", "g", "w", "h", "n", "i", "j",
+	"c", "p", "z", "s", "t", "b", "e", "m", "l", "q", "d", "o"
+];
+
+const venLetters = [
+	"f", "u", "x", "a", "r", "k", "g", "w", "h", "n", "i", "j",
+	"c", "p", "z", "s", "t", "b", "e", "m", "l", "q", "d", "o"
 ];
 
 const runeMeaningsDE = [
@@ -339,16 +337,62 @@ wheelCheckButton.addEventListener("click", () => {
 	}
 });
 
-document.querySelectorAll(".wheel-fixed").forEach(btn => {
-	btn.textContent = wheelLetter;
-	const fontName = btn.dataset.font;
-	if (fontName) {
-		btn.style.fontFamily = fontName;
+// Initialize reference wheels with arrays
+const referenceWheels = [
+	{ element: document.querySelectorAll(".wheel-fixed")[0], letters: phoLetters, entries: [] },
+	{ element: document.querySelectorAll(".wheel-fixed")[1], letters: greLetters, entries: [] },
+	{ element: document.querySelectorAll(".wheel-fixed")[2], letters: itaLetters, entries: [] },
+	{ element: document.querySelectorAll(".wheel-fixed")[3], letters: venLetters, entries: [] }
+];
+
+const stepRem = 4;
+const entryOffset = -3.35; // For main wheel
+const referenceEntryOffset = -2.0; // For reference wheels - adjust this value
+
+// Initialize reference wheels - FIXED to wheelLetter
+referenceWheels.forEach(wheel => {
+	const container = wheel.element;
+	container.innerHTML = ""; // Clear existing content
+	container.style.position = "relative";
+	container.style.overflow = "hidden";
+	
+	const letters = wheel.letters;
+	const totalLetters = letters.length;
+	const wheelLetterIndex = letters.indexOf(wheelLetter);
+	
+	if (wheelLetterIndex === -1) return;
+	
+	// Create 5 entries for each reference wheel
+	for (let i = 0; i < 5; i++) {
+		const entry = document.createElement("div");
+		entry.className = "wheel-fixed-entry";
+		entry.style.position = "absolute";
+		entry.style.left = "50%";
+		entry.style.width = "100%";
+		entry.style.height = "2.5rem";
+		entry.style.paddingTop = "0.5rem";
+		entry.style.display = "flex";
+		entry.style.justifyContent = "center";
+		entry.style.alignItems = "center";
+		entry.style.fontSize = "2.5rem";
+		entry.style.transform = `translate(-50%, ${referenceEntryOffset + i * stepRem}rem)`; // Use referenceEntryOffset
+		
+		const fontName = container.dataset.font;
+		if (fontName) {
+			entry.style.fontFamily = fontName;
+		}
+		
+		// Calculate which letter to show: -2, -1, 0 (center = wheelLetter), +1, +2
+		const offset = i - 2;
+		const letterIndex = (wheelLetterIndex + offset + totalLetters) % totalLetters;
+		entry.textContent = letters[letterIndex];
+		
+		container.appendChild(entry);
+		wheel.entries.push(entry);
 	}
 });
 
-const stepRem = 4;
-const entryOffset = -3.25;
+// Main wheel setup
 const parent = document.getElementById("wheel-main");
 const entries = Array.from(document.querySelectorAll(".wheel-main-entry"));
 const totalHeight = entries.length * stepRem;
@@ -445,7 +489,6 @@ function snap() {
 parent.addEventListener("pointerup", snap);
 parent.addEventListener("pointercancel", snap);
 parent.addEventListener("pointerleave", snap);
-
 
 // Functional stuff
 

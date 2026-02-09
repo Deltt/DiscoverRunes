@@ -420,7 +420,6 @@ p {
 /* Wheel */
 .wheel-container {
     margin: 0.5rem 0;
-    /* background: #BCB82A; */
     width: 85%;
     height: 16rem;
     display: flex;
@@ -435,13 +434,26 @@ p {
     margin: 0 0.5rem;
     background: #58585862;
     border-radius: 0.4rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    position: relative;
+    overflow: hidden;
+    
+    -webkit-mask-image: linear-gradient(to bottom,
+            transparent 0%,
+            transparent 15%,
+            black 50%,
+            transparent 85%,
+            transparent 100%);
+    mask-image: linear-gradient(to bottom,
+            transparent 0%,
+            transparent 15%,
+            black 50%,
+            transparent 85%,
+            transparent 100%);
+}
+
+.wheel-fixed-entry {
     font-family: "Futhark";
-    font-size: 2.5rem;
-    padding-top: 0.3rem;
+    pointer-events: none; /* Make non-interactable */
 }
 
 #wheel-main {
@@ -474,21 +486,15 @@ p {
 
 .wheel-main-entry {
     position: absolute;
-
-    /* X positioning */
     top: 0.0rem;
     left: 50%;
     transform: translateX(-50%);
-
-    /* size */
     width: 100%;
     height: 2.5rem;
     padding-top: 0.5rem;
-
     display: flex;
     justify-content: center;
     align-items: center;
-
     font-family: "Futhark";
     font-size: 3.5rem;
     transition: box-shadow 0.35s ease, border-color 0.35s ease, color 0.35s ease;
