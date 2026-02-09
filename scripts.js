@@ -100,21 +100,35 @@ showPage("start");
 let isSwitchingPage = false;
 let lastPage = "start";
 let currentPage = "start";
+const backArray = [];
 document.getElementById("back-button").addEventListener("click", () => {
 	if (isSwitchingPage) return;
-	switchPage(lastPage);
+	console.log(backArray.length);
+
+	if (backArray.length > 0) {
+		switchPage(backArray[backArray.length - 1], false);
+		backArray.pop();
+	}
+	//switchPage(lastPage);
 });
 
 document.getElementById("home-button").addEventListener("click", () => {
 	if (isSwitchingPage) return;
-	switchPage("start");
+	switchPage("start", true);
 });
 
 
-function switchPage(targetId) {
+function switchPage(targetId, addToBack) {
 	overlay.classList.add("hidden");
 	const current = document.querySelector(".page.active");
 	const next = document.getElementById(targetId);
+
+	if (addToBack) {
+		backArray.push(current.id);
+		if (backArray.length > 20) {
+			backArray.shift();
+		}
+	}
 
 	isSwitchingPage = true;
 	lastPage = current.id;
@@ -173,7 +187,7 @@ function switchPage(targetId) {
 document.querySelectorAll(".interaction-change-page").forEach(btn => {
 	btn.addEventListener("click", () => {
 		const targetId = btn.dataset.next;
-		switchPage(targetId);
+		switchPage(targetId, true);
 	});
 });
 
