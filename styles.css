@@ -348,6 +348,10 @@ p {
     font-size: var(2rem);
 }
 
+.futhark-overview-overlay-attribute2 {
+    font-size: 0.4rem;
+}
+
 /* Origin */
 
 .rune-origin {

@@ -37,7 +37,7 @@ const runeMeaningsDE = [
 	"Eis",                             // 10
 	"Jahr, Ernte",                     // 11
 	"Baum des Lebens",                 // 12
-	"?",                               // 13
+	"Unbekannt",                               // 13
 	"Elch, Schutz",                    // 14
 	"Sonne",                           // 15
 	"Tiwaz (ein Gott), Sieg",          // 16
