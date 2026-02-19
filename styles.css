@@ -302,7 +302,7 @@ p {
 }
 
 .futhark-overview-overlay-spacer {
-    height: 0.5rem;
+    height: 0.0rem;
 }
 
 .futhark-overview-overlay-content {
@@ -406,15 +406,37 @@ p {
 }
 
 .correct-glow {
-    box-shadow: 0 0 12px #00ff88;
-    border-color: #00ff88;
-    color: #00ff88;
+    box-shadow: 0 0 12px var(--button-color);
+    border-color: var(--button-color);
+    color: var(--button-color);
 }
 
 .wrong-glow {
-    box-shadow: 0 0 12px #ff9f1c;
-    border-color: #ff9f1c;
-    color: #ff9f1c;
+    box-shadow: 0 0 12px #cc4444;
+    border-color: #cc4444;
+    color: #cc4444;
+}
+
+.quiz-slot-bar {
+    width: 2.2rem;
+    height: 2px;
+    background: var(--button-color);
+    border-radius: 1px;
+    opacity: 0.7;
+}
+
+.quiz-cursor-dot {
+    width: 0.3rem;
+    height: 0.3rem;
+    border-radius: 50%;
+    background: transparent;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+    margin-top: 0.15rem;
+}
+
+.quiz-cursor-dot-active {
+    background: var(--button-color);
+    box-shadow: 0 0 6px var(--button-color);
 }
 
 /* Wheel */

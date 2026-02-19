@@ -219,22 +219,50 @@ const quizTop = document.getElementById("quiz-top");
 const quizBottom = document.getElementById("quiz-bottom");
 const quizTopElements = [];
 const quizBottomElements = [];
-let currentTopElement = 0;
+// Track which bottom tile is placed in each top slot (by index into quizBottomElements)
+const quizSlotSource = []; // quizSlotSource[slotIndex] = bottomTileIndex or null
+let currentTopElement = 0; // the "cursor" slot index
+let quizLocked = false; // prevent interaction during animation
 
 const possibleFillers = [
 	"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
 	"n", "o", "p", "q", "r", "s", "t", "u", "w", "x", "z"
 ];
 
-quizWord1.forEach(letter => {
+// Build top slots
+quizWord1.forEach((letter, i) => {
+	const wrapper = document.createElement("div");
+	wrapper.style.display = "flex";
+	wrapper.style.flexDirection = "column";
+	wrapper.style.alignItems = "center";
+	wrapper.style.gap = "0.25rem";
+
 	const div = document.createElement("div");
 	quizTopElements.push(div);
+	quizSlotSource.push(null);
 	div.classList.add("quiz-top-tile");
 	div.dataset.property = letter;
-	div.textContent = "_";
-	quizTop.appendChild(div);
+	div.dataset.slotIndex = i;
+	div.textContent = "";
+
+	// Underline bar (always visible)
+	const bar = document.createElement("div");
+	bar.classList.add("quiz-slot-bar");
+
+	// Cursor dot (sits below the bar)
+	const dot = document.createElement("div");
+	dot.classList.add("quiz-cursor-dot");
+	dot.dataset.slotIndex = i;
+
+	wrapper.appendChild(div);
+	wrapper.appendChild(bar);
+	wrapper.appendChild(dot);
+	quizTop.appendChild(wrapper);
 });
 
+updateCursor();
+
+// Build bottom tiles
 const letters = [...quizWord1];
 
 while (letters.length < 8) {
@@ -245,7 +273,7 @@ while (letters.length < 8) {
 
 letters.sort(() => Math.random() - 0.5);
 
-letters.forEach(letter => {
+letters.forEach((letter, idx) => {
 	const div = document.createElement("div");
 	quizBottomElements.push(div);
 	div.classList.add("futhark-overview-grid-tile");
@@ -253,76 +281,166 @@ letters.forEach(letter => {
 	p.classList.add("futhark-overview-grid-letter");
 
 	div.dataset.property = letter;
-	//div.textContent = letter;
+	div.dataset.bottomIndex = idx;
 	p.textContent = letter;
 
 	quizBottom.appendChild(div);
 	div.appendChild(p);
 });
 
-function resetTop() {
-	currentTopElement = 0;
-	quizTopElements.forEach(el => {
-		el.textContent = "_";
-		el.classList.remove("correct-glow");
+function updateCursor() {
+	document.querySelectorAll(".quiz-cursor-dot").forEach(dot => {
+		const idx = parseInt(dot.dataset.slotIndex);
+		dot.classList.toggle("quiz-cursor-dot-active", idx === currentTopElement);
+	});
+}
+
+function findFirstEmpty() {
+	for (let i = 0; i < quizTopElements.length; i++) {
+		if (quizSlotSource[i] === null) return i;
+	}
+	return quizTopElements.length; // all filled
+}
+
+function resetTop(keepCorrect = false) {
+	quizLocked = false;
+	quizTopElements.forEach((el, i) => {
+		if (keepCorrect && el.textContent === quizWord1[i]) return; // leave correct alone
+		// Re-enable the bottom tile that was placed here
+		if (quizSlotSource[i] !== null) {
+			const bottomEl = quizBottomElements[quizSlotSource[i]];
+			if (bottomEl) bottomEl.classList.remove("futhark-overview-grid-tile-disabled");
+			quizSlotSource[i] = null;
+		}
+		el.textContent = "";
+		el.classList.remove("correct-glow", "wrong-glow");
 	});
 
-	quizBottomElements.forEach(el => {
-		el.classList.remove("futhark-overview-grid-tile-disabled");
-	});
+	// Move cursor to first empty slot
+	currentTopElement = findFirstEmpty();
+	if (currentTopElement >= quizTopElements.length) currentTopElement = 0;
+	updateCursor();
 }
 
 function checkAnswer() {
+	quizLocked = true;
 	const filled = quizTopElements.map(el => el.textContent);
-	const correct = filled.every((letter, i) => letter === quizWord1[i]);
+	const allCorrect = filled.every((letter, i) => letter === quizWord1[i]);
 
-	if (correct) {
-		quizTopElements.forEach(el => {
-			el.classList.add("correct-glow");
-		});
+	if (allCorrect) {
+		quizTopElements.forEach(el => el.classList.add("correct-glow"));
+		// Stay locked, puzzle complete
 	} else {
-		let finished = 0;
-
-		quizTopElements.forEach(el => {
-			el.classList.add("wrong-glow");
-
-			const onTransitionEnd = (e) => {
-				if (e.propertyName !== "box-shadow") return;
-
-				el.removeEventListener("transitionend", onTransitionEnd);
-				finished++;
-
-				if (finished === quizTopElements.length) {
-					// ⏳ extra pause AFTER glow finishes
-					setTimeout(() => {
-						quizTopElements.forEach(el => {
-							el.classList.remove("wrong-glow");
-						});
-						resetTop();
-					}, 1000); // ← at least 1 second
-				}
-			};
-
-			el.addEventListener("transitionend", onTransitionEnd);
+		// Mark each slot correct or wrong
+		const wrongEls = [];
+		quizTopElements.forEach((el, i) => {
+			if (el.textContent === quizWord1[i]) {
+				el.classList.add("correct-glow");
+			} else {
+				el.classList.add("wrong-glow");
+				wrongEls.push(el);
+			}
 		});
+
+		// Pause so glow is visible, then fade opacity only (no transform)
+		setTimeout(() => {
+			wrongEls.forEach(el => {
+				el.style.transition = "opacity 0.35s ease";
+				el.style.opacity = "0";
+			});
+
+			// After fade: hide instantly, clear state, restore
+			setTimeout(() => {
+				wrongEls.forEach(el => {
+					el.style.transition = "none";
+					el.style.opacity = "0";
+					el.style.visibility = "hidden";
+
+					el.classList.remove("wrong-glow");
+					el.textContent = "";
+
+					const i = parseInt(el.dataset.slotIndex);
+					if (quizSlotSource[i] !== null) {
+						const bottomEl = quizBottomElements[quizSlotSource[i]];
+						if (bottomEl) bottomEl.classList.remove("futhark-overview-grid-tile-disabled");
+						quizSlotSource[i] = null;
+					}
+				});
+
+				currentTopElement = findFirstEmpty();
+				updateCursor();
+				quizLocked = false;
+
+				// Restore: first clear opacity while hidden, then make visible, then re-enable transitions
+				wrongEls.forEach(el => {
+					el.style.opacity = "";
+				});
+				requestAnimationFrame(() => {
+					wrongEls.forEach(el => {
+						el.style.visibility = "";
+					});
+					requestAnimationFrame(() => {
+						wrongEls.forEach(el => {
+							el.style.transition = "";
+						});
+					});
+				});
+			}, 400);
+		}, 800);
 	}
 }
 
-quizBottomElements.forEach(div => {
+// Top slot click: tap filled slot to delete, tap empty slot to move cursor
+quizTopElements.forEach((el, i) => {
+	el.addEventListener("click", () => {
+		if (quizLocked) return;
+		if (el.classList.contains("correct-glow")) return; // can't delete correct
+
+		if (quizSlotSource[i] !== null) {
+			// Delete this slot
+			const bottomEl = quizBottomElements[quizSlotSource[i]];
+			if (bottomEl) bottomEl.classList.remove("futhark-overview-grid-tile-disabled");
+			quizSlotSource[i] = null;
+			el.textContent = "";
+			el.classList.remove("wrong-glow", "correct-glow");
+			currentTopElement = i;
+			updateCursor();
+		} else {
+			// Move cursor here
+			currentTopElement = i;
+			updateCursor();
+		}
+	});
+});
+
+quizBottomElements.forEach((div, bottomIdx) => {
 	div.addEventListener("click", () => {
-		if (currentTopElement >= quizTopElements.length) return;
+		if (quizLocked) return;
 		if (div.classList.contains("futhark-overview-grid-tile-disabled")) return;
+		if (currentTopElement >= quizTopElements.length) return;
 
 		const letter = div.dataset.property;
 		div.classList.add("futhark-overview-grid-tile-disabled");
 
 		const topEl = quizTopElements[currentTopElement];
 		topEl.textContent = letter;
+		quizSlotSource[currentTopElement] = bottomIdx;
 
-		currentTopElement++;
-
-		if (currentTopElement === quizTopElements.length) {
-			checkAnswer();
+		// Find next empty slot (search forward wrapping around)
+		const totalSlots = quizTopElements.length;
+		const allFilled = quizSlotSource.every(s => s !== null);
+		if (allFilled) {
+			currentTopElement = -1;
+			updateCursor();
+			setTimeout(checkAnswer, 150);
+		} else {
+			let next = -1;
+			for (let offset = 1; offset <= totalSlots; offset++) {
+				const candidate = (currentTopElement + offset) % totalSlots;
+				if (quizSlotSource[candidate] === null) { next = candidate; break; }
+			}
+			currentTopElement = next;
+			updateCursor();
 		}
 	});
 });
