@@ -359,7 +359,7 @@ p {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scale(1);
 
     width: 90%;
     height: 90%;
@@ -378,6 +378,20 @@ p {
     /* horizontal */
     align-items: center;
     /* vertical */
+
+    opacity: 1;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+#futhark-overview-overlay.fading-out {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.96);
+    pointer-events: none;
+}
+
+#futhark-overview-overlay.fading-in {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.96);
 }
 
 .futhark-overview-overlay-spacer {

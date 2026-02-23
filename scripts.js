@@ -195,6 +195,24 @@ const rune = document.getElementById("futhark-overview-overlay-rune");
 const latinLetter = document.getElementById("overlay-latin-letter");
 const meaning = document.getElementById("overlay-meaning");
 
+function showOverlay() {
+	overlay.classList.remove("hidden", "fading-out");
+	overlay.classList.add("fading-in");
+	requestAnimationFrame(() => {
+		requestAnimationFrame(() => {
+			overlay.classList.remove("fading-in");
+		});
+	});
+}
+
+function hideOverlay() {
+	overlay.classList.add("fading-out");
+	overlay.addEventListener("transitionend", () => {
+		overlay.classList.add("hidden");
+		overlay.classList.remove("fading-out");
+	}, { once: true });
+}
+
 document.querySelectorAll(".futhark-overview-grid-tile").forEach(btn => {
 	btn.addEventListener("click", () => {
 		const runeIndex = Number(btn.dataset.rune_index);
@@ -203,14 +221,13 @@ document.querySelectorAll(".futhark-overview-grid-tile").forEach(btn => {
 		rune.textContent = runeLetter.toLowerCase();
 		latinLetter.textContent = runeLetter.toLowerCase();
 		meaning.textContent = runeMeaningsDE[runeIndex];
-		overlay.classList.remove("hidden");
+		showOverlay();
 	});
 });
 
 document.getElementById("futhark-overview-overlay-closebox").addEventListener("click", () => {
-	overlay.classList.add("hidden");
+	hideOverlay();
 });
-
 // =====================
 // Multi-Level Quiz System
 // =====================
