@@ -152,7 +152,7 @@ body {
 /* Layout Helpers */
 
 .top-spacer {
-    height: 1.5rem;
+    height: 1.0rem;
 }
 
 .center-container {
@@ -165,6 +165,33 @@ body {
     width: 100%;
     background: var(--center-container-background);
     border: var(--center-container-border-thickness) solid black;
+}
+
+.center-container-split {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    background: var(--center-container-background);
+    border: var(--center-container-border-thickness) solid black;
+}
+
+.center-container-split-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;  /* elements hug the left */
+    width: 50%;               /* 👈 tweak this % */
+    overflow: hidden;
+}
+
+.center-container-split-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;    /* elements hug the right */
+    flex: 1;                  /* takes remaining space */
+    overflow: hidden;
 }
 
 .right-container {
@@ -197,9 +224,11 @@ body {
 }
 
 .text-container {
-    width: 85%;
+    width: 80%;
     background: var(--text-container-background);
     margin: 0.5rem 0rem;
+    line-height: 1.4;
+    font-weight: 100;
 }
 
 p {
@@ -213,7 +242,6 @@ p {
 .button-spacer {
     padding-top: 1rem;
 }
-
 
 .default-button {
     appearance: none;
@@ -231,18 +259,39 @@ p {
     font-family: "Rethink", sans-serif;
     color: var(--button-text-color);
     box-shadow: 0.2rem 0.2rem #00000085;
-}
 
+    clip-path: polygon(
+        0% 0%,
+
+        70% 0%,
+        72% 5%,
+        75% 0%,
+
+        80% 0%,
+        83% 3%,
+        86% 0%,
+
+        100% 0%,
+
+        100% 100%,
+
+        28% 100%,
+        27% 94%,
+        24% 100%,
+
+        0% 100%
+    );
+}
 
 /* Futhark Overview */
 
 .futhark-overview-grid-container {
     margin: 0.5rem 0rem;
-    width: 75%;
+    width: 80%;
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     /* 5 columns */
-    gap: 0.5rem;
+    gap: 1.0rem;
     /* spacing between elements */
     /* background: red; */
     justify-items: center;
@@ -252,17 +301,47 @@ p {
     position: relative;
 }
 
+.futhark-overview-grid-tile-wrapper {
+    filter: drop-shadow(0.25rem 0.25rem 0px #535715);
+}
+
 .futhark-overview-grid-tile {
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 0.4rem;
+    border-radius: 0.2rem;
     height: 2.5rem;
     padding-top: 0.5rem;
     width: 2.0rem;
     /* fills the grid cell width */
     background: var(--button-color);
-    box-shadow: 0.2rem 0.2rem #00000085;
+    /* box-shadow: 0.2rem 0.2rem #00000085; */
+
+    clip-path: polygon(
+        0% 0%,      /* top-left */
+
+        60% 0%,
+        63% 5%,
+        66% 0%,
+
+        100% 0%,
+
+        100% 30%,
+        95% 33%,
+        100% 36%,
+
+        100% 100%,
+
+        43% 100%,
+        40% 96%,
+        37% 100%,
+
+        30% 100%,
+        24% 94%,
+        18% 100%,
+
+        0% 100%
+    );
 }
 
 .futhark-overview-grid-tile-disabled {
@@ -271,7 +350,7 @@ p {
 
 .futhark-overview-grid-letter {
     color: var(--text-color);
-    font-size: 2rem;
+    font-size: 2.5rem;
     font-family: "Futhark";
     font-weight: 500;
 }
@@ -302,14 +381,34 @@ p {
 }
 
 .futhark-overview-overlay-spacer {
-    height: 0.0rem;
+    height: 0.3rem;
 }
 
 .futhark-overview-overlay-content {
     display: flex;
+    flex-direction: row;  /* horizontal layout */
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    padding: 0 1rem;
+    box-sizing: border-box;
+}
+
+.futhark-overview-overlay-left {
+    display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.3rem;
+    width: 30%;
+    flex-shrink: 0;
+}
+
+.futhark-overview-overlay-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    flex: 1;  /* takes remaining space */
 }
 
 #futhark-overview-overlay-closebox {
@@ -336,20 +435,23 @@ p {
 }
 
 #futhark-overview-overlay-rune {
-    font-size: 4rem;
+    font-size: 5rem;
     font-family: "Futhark";
 }
 
 .futhark-overview-overlay-attribute {
     font-size: var(--text-font-size);
+    text-align: center;
 }
 
 .futhark-overview-overlay-text {
     font-size: var(2rem);
+    text-align: center;
 }
 
 .futhark-overview-overlay-attribute2 {
-    font-size: 0.4rem;
+    font-size: 0.3rem;
+    color: #f3f1f762;
 }
 
 /* Origin */
@@ -369,7 +471,9 @@ p {
 
 /* Quiz */
 
-#quiz-top {
+#quiz-top,
+#quiz2-top,
+#quiz3-top {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -379,7 +483,9 @@ p {
     font-family: "Futhark";
 }
 
-#quiz-bottom {
+#quiz-bottom,
+#quiz2-bottom,
+#quiz3-bottom {
     grid-template-columns: repeat(4, 1fr);
     width: 50%;
 }
@@ -387,6 +493,7 @@ p {
 .quiz-top-tile {
     height: 3rem;
     width: 2rem;
+    margin: 0 0.4rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -534,4 +641,12 @@ p {
 .wheel-main-entry.wrong-glow {
 	color: #ff4d4d;
 	box-shadow: 0 0 12px 4px rgba(255, 77, 77, 0.8);
+}
+/* Quiz next button fade-in */
+.quiz-next-btn {
+    transition: opacity 0.6s ease;
+}
+
+.quiz-next-btn.hidden {
+    display: none !important;
 }

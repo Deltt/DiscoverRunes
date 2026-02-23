@@ -25,59 +25,57 @@ const venLetters = [
 
 const runeMeaningsDE = [
 	"Vieh, Wohlstand",                 // 0
-	"Auerochse, Stärke",               // 1
-	"Riese, Thor",                     // 2
-	"Gott, Odin",                      // 3
-	"Reise, Rad",                      // 4
-	"Feuer",                           // 5
-	"Geschenk",                        // 6
-	"Freude",                          // 7
-	"Wind",                            // 8
-	"Bedürfnis, brauchen",             // 9
+	"Auerochse",               // 1
+	"Riese, Dämon",                     // 2
+	"Ase (heidnischer Gott)",                      // 3
+	"Ritt, Fahrt, Wagen",                      // 4
+	"Geschwür, Krankheit",                           // 5
+	"Gabe",                        // 6
+	"Wonne, Freude",                          // 7
+	"Hagel",                            // 8
+	"Not, Zwang",             // 9
 	"Eis",                             // 10
 	"Jahr, Ernte",                     // 11
-	"Baum des Lebens",                 // 12
-	"Unbekannt",                               // 13
+	"Eibe",                 // 12
+	"Fruchtbaum",                               // 13
 	"Elch, Schutz",                    // 14
 	"Sonne",                           // 15
-	"Tiwaz (ein Gott), Sieg",          // 16
-	"Birke, Geburt",                   // 17
+	"Tyr (Göttername)",          // 16
+	"Birkenzweig",                   // 17
 	"Pferd",                           // 18
-	"Mann",                            // 19
-	"Wasser, See",                     // 20
-	"Ingwaz (ein Gott), Fruchtbarkeit",// 21
-	"Tag, Dämmerung",                  // 22
-	"Abstammung, Eigentum"             // 23
+	"Mensch, Mann",                            // 19
+	"Wasser, Gewässer",                     // 20
+	"Ingwaz (Göttername)",// 21
+	"Tag",                  // 22
+	"Erbbesitz"             // 23
 ];
 
 const runeMeaningsEN = [
-	"cattle, wealth",                  // 0
-	"aurochs, strength",               // 1
-	"giant, thor",                     // 2
-	"god, odin",                       // 3
-	"journey, wheel",                  // 4
-	"ulcer, fire",                     // 5
-	"gift",                            // 6
-	"joy",                             // 7
-	"hail, air",                       // 8
-	"need, necessity",                 // 9
-	"ice",                             // 10
-	"year, harvest",                   // 11
-	"yew tree, tree of life",          // 12
-	"?",                               // 13
-	"elk, protection",                 // 14
-	"sun",                             // 15
-	"Tiwaz (a god), victory",          // 16
-	"birch, birth",                    // 17
-	"horse",                           // 18
-	"man",                             // 19
-	"water, lake",                     // 20
-	"Ingwaz (a god), fertility",       // 21
-	"day, dawn",                       // 22
-	"heritage, property"               // 23
+    "Cattle, Wealth",              // 0
+    "Aurochs",                     // 1
+    "Giant, Demon",                // 2
+    "Aesir (pagan god)",           // 3
+    "Ride, Journey, Wagon",        // 4
+    "Ulcer, Disease",              // 5
+    "Gift",                        // 6
+    "Delight, Joy",                // 7
+    "Hail",                        // 8
+    "Distress, Constraint",        // 9
+    "Ice",                         // 10
+    "Year, Harvest",               // 11
+    "Yew",                         // 12
+    "Fruit tree",                  // 13
+    "Elk, Protection",             // 14
+    "Sun",                         // 15
+    "Tyr (god's name)",            // 16
+    "Birch branch",                // 17
+    "Horse",                        // 18
+    "Human, Man",                  // 19
+    "Water, Body of water",        // 20
+    "Ingwaz (god's name)",         // 21
+    "Day",                          // 22
+    "Inherited property"           // 23
 ];
-
-
 
 // Show a page by id
 function showPage(id) {
@@ -202,8 +200,8 @@ document.querySelectorAll(".futhark-overview-grid-tile").forEach(btn => {
 		const runeIndex = Number(btn.dataset.rune_index);
 		const runeLetter = futharkLetters[runeIndex];
 
-		rune.textContent = runeLetter;
-		latinLetter.textContent = runeLetter.toUpperCase();
+		rune.textContent = runeLetter.toLowerCase();
+		latinLetter.textContent = runeLetter.toLowerCase();
 		meaning.textContent = runeMeaningsDE[runeIndex];
 		overlay.classList.remove("hidden");
 	});
@@ -213,237 +211,303 @@ document.getElementById("futhark-overview-overlay-closebox").addEventListener("c
 	overlay.classList.add("hidden");
 });
 
-// Quiz
-const quizWord1 = ["k", "a", "m", "m"];
-const quizTop = document.getElementById("quiz-top");
-const quizBottom = document.getElementById("quiz-bottom");
-const quizTopElements = [];
-const quizBottomElements = [];
-// Track which bottom tile is placed in each top slot (by index into quizBottomElements)
-const quizSlotSource = []; // quizSlotSource[slotIndex] = bottomTileIndex or null
-let currentTopElement = 0; // the "cursor" slot index
-let quizLocked = false; // prevent interaction during animation
+// =====================
+// Multi-Level Quiz System
+// =====================
 
 const possibleFillers = [
 	"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
 	"n", "o", "p", "q", "r", "s", "t", "u", "w", "x", "z"
 ];
 
-// Build top slots
-quizWord1.forEach((letter, i) => {
-	const wrapper = document.createElement("div");
-	wrapper.style.display = "flex";
-	wrapper.style.flexDirection = "column";
-	wrapper.style.alignItems = "center";
-	wrapper.style.gap = "0.25rem";
+// Quiz level definitions
+const quizLevels = [
+	{ word: ["k", "a", "m", "m"],         topId: "quiz-top",  bottomId: "quiz-bottom",  nextBtnId: "quiz1-next-btn" },
+	{ word: ["s", "t", "e", "i", "n"],    topId: "quiz2-top", bottomId: "quiz2-bottom", nextBtnId: "quiz2-next-btn" },
+	{ word: ["f", "i", "b", "e", "l"],    topId: "quiz3-top", bottomId: "quiz3-bottom", nextBtnId: "quiz3-next-btn" },
+];
 
-	const div = document.createElement("div");
-	quizTopElements.push(div);
-	quizSlotSource.push(null);
-	div.classList.add("quiz-top-tile");
-	div.dataset.property = letter;
-	div.dataset.slotIndex = i;
-	div.textContent = "";
+// Solved state per level
+const quizSolved = [false, false, false];
 
-	// Underline bar (always visible)
-	const bar = document.createElement("div");
-	bar.classList.add("quiz-slot-bar");
+// Store per-level state objects
+const quizStates = [];
 
-	// Cursor dot (sits below the bar)
-	const dot = document.createElement("div");
-	dot.classList.add("quiz-cursor-dot");
-	dot.dataset.slotIndex = i;
+function buildQuiz(levelIndex) {
+	const level = quizLevels[levelIndex];
+	const word = level.word;
+	const topContainer = document.getElementById(level.topId);
+	const bottomContainer = document.getElementById(level.bottomId);
+	const nextBtn = document.getElementById(level.nextBtnId);
 
-	wrapper.appendChild(div);
-	wrapper.appendChild(bar);
-	wrapper.appendChild(dot);
-	quizTop.appendChild(wrapper);
-});
+	topContainer.innerHTML = "";
+	bottomContainer.innerHTML = "";
 
-updateCursor();
+	const topElements = [];
+	const bottomElements = [];
+	const slotSource = [];
+	let currentSlot = 0;
+	let locked = false;
 
-// Build bottom tiles
-const letters = [...quizWord1];
+	// Build top slots
+	word.forEach((letter, i) => {
+		const wrapper = document.createElement("div");
+		wrapper.style.display = "flex";
+		wrapper.style.flexDirection = "column";
+		wrapper.style.alignItems = "center";
+		wrapper.style.gap = "0.25rem";
 
-while (letters.length < 8) {
-	const randomLetter =
-		possibleFillers[Math.floor(Math.random() * possibleFillers.length)];
-	letters.push(randomLetter);
-}
+		const div = document.createElement("div");
+		topElements.push(div);
+		slotSource.push(null);
+		div.classList.add("quiz-top-tile");
+		div.dataset.property = letter;
+		div.dataset.slotIndex = i;
+		div.textContent = "";
 
-letters.sort(() => Math.random() - 0.5);
+		const bar = document.createElement("div");
+		bar.classList.add("quiz-slot-bar");
 
-letters.forEach((letter, idx) => {
-	const div = document.createElement("div");
-	quizBottomElements.push(div);
-	div.classList.add("futhark-overview-grid-tile");
-	const p = document.createElement("p");
-	p.classList.add("futhark-overview-grid-letter");
+		const dot = document.createElement("div");
+		dot.classList.add("quiz-cursor-dot");
+		dot.dataset.slotIndex = i;
 
-	div.dataset.property = letter;
-	div.dataset.bottomIndex = idx;
-	p.textContent = letter;
-
-	quizBottom.appendChild(div);
-	div.appendChild(p);
-});
-
-function updateCursor() {
-	document.querySelectorAll(".quiz-cursor-dot").forEach(dot => {
-		const idx = parseInt(dot.dataset.slotIndex);
-		dot.classList.toggle("quiz-cursor-dot-active", idx === currentTopElement);
+		wrapper.appendChild(div);
+		wrapper.appendChild(bar);
+		wrapper.appendChild(dot);
+		topContainer.appendChild(wrapper);
 	});
-}
 
-function findFirstEmpty() {
-	for (let i = 0; i < quizTopElements.length; i++) {
-		if (quizSlotSource[i] === null) return i;
+	// Build bottom tiles
+	const letters = [...word];
+	while (letters.length < 8) {
+		const randomLetter = possibleFillers[Math.floor(Math.random() * possibleFillers.length)];
+		letters.push(randomLetter);
 	}
-	return quizTopElements.length; // all filled
-}
+	letters.sort(() => Math.random() - 0.5);
 
-function resetTop(keepCorrect = false) {
-	quizLocked = false;
-	quizTopElements.forEach((el, i) => {
-		if (keepCorrect && el.textContent === quizWord1[i]) return; // leave correct alone
-		// Re-enable the bottom tile that was placed here
-		if (quizSlotSource[i] !== null) {
-			const bottomEl = quizBottomElements[quizSlotSource[i]];
-			if (bottomEl) bottomEl.classList.remove("futhark-overview-grid-tile-disabled");
-			quizSlotSource[i] = null;
-		}
-		el.textContent = "";
-		el.classList.remove("correct-glow", "wrong-glow");
+	letters.forEach((letter, idx) => {
+		const div = document.createElement("div");
+		bottomElements.push(div);
+		div.classList.add("futhark-overview-grid-tile");
+		const p = document.createElement("p");
+		p.classList.add("futhark-overview-grid-letter");
+		div.dataset.property = letter;
+		div.dataset.bottomIndex = idx;
+		p.textContent = letter;
+		bottomContainer.appendChild(div);
+		div.appendChild(p);
 	});
 
-	// Move cursor to first empty slot
-	currentTopElement = findFirstEmpty();
-	if (currentTopElement >= quizTopElements.length) currentTopElement = 0;
-	updateCursor();
-}
-
-function checkAnswer() {
-	quizLocked = true;
-	const filled = quizTopElements.map(el => el.textContent);
-	const allCorrect = filled.every((letter, i) => letter === quizWord1[i]);
-
-	if (allCorrect) {
-		quizTopElements.forEach(el => el.classList.add("correct-glow"));
-		// Stay locked, puzzle complete
-	} else {
-		// Mark each slot correct or wrong
-		const wrongEls = [];
-		quizTopElements.forEach((el, i) => {
-			if (el.textContent === quizWord1[i]) {
-				el.classList.add("correct-glow");
-			} else {
-				el.classList.add("wrong-glow");
-				wrongEls.push(el);
-			}
+	function updateCursorLocal() {
+		topContainer.querySelectorAll(".quiz-cursor-dot").forEach(dot => {
+			const idx = parseInt(dot.dataset.slotIndex);
+			dot.classList.toggle("quiz-cursor-dot-active", idx === currentSlot);
 		});
+	}
 
-		// Pause so glow is visible, then fade opacity only (no transform)
-		setTimeout(() => {
-			wrongEls.forEach(el => {
-				el.style.transition = "opacity 0.35s ease";
-				el.style.opacity = "0";
+	function findFirstEmpty() {
+		for (let i = 0; i < topElements.length; i++) {
+			if (slotSource[i] === null) return i;
+		}
+		return topElements.length;
+	}
+
+	function showNextButton() {
+		nextBtn.style.opacity = "0";
+		nextBtn.classList.remove("hidden");
+		requestAnimationFrame(() => {
+			requestAnimationFrame(() => {
+				nextBtn.style.transition = "opacity 0.6s ease";
+				nextBtn.style.opacity = "1";
+			});
+		});
+	}
+
+	function checkAnswer() {
+		locked = true;
+		const filled = topElements.map(el => el.textContent);
+		const allCorrect = filled.every((letter, i) => letter === word[i]);
+
+		if (allCorrect) {
+			topElements.forEach(el => el.classList.add("correct-glow"));
+			quizSolved[levelIndex] = true;
+			setTimeout(showNextButton, 400);
+		} else {
+			const wrongEls = [];
+			topElements.forEach((el, i) => {
+				if (el.textContent === word[i]) {
+					el.classList.add("correct-glow");
+				} else {
+					el.classList.add("wrong-glow");
+					wrongEls.push(el);
+				}
 			});
 
-			// After fade: hide instantly, clear state, restore
 			setTimeout(() => {
 				wrongEls.forEach(el => {
-					el.style.transition = "none";
+					el.style.transition = "opacity 0.35s ease";
 					el.style.opacity = "0";
-					el.style.visibility = "hidden";
-
-					el.classList.remove("wrong-glow");
-					el.textContent = "";
-
-					const i = parseInt(el.dataset.slotIndex);
-					if (quizSlotSource[i] !== null) {
-						const bottomEl = quizBottomElements[quizSlotSource[i]];
-						if (bottomEl) bottomEl.classList.remove("futhark-overview-grid-tile-disabled");
-						quizSlotSource[i] = null;
-					}
 				});
 
-				currentTopElement = findFirstEmpty();
-				updateCursor();
-				quizLocked = false;
-
-				// Restore: first clear opacity while hidden, then make visible, then re-enable transitions
-				wrongEls.forEach(el => {
-					el.style.opacity = "";
-				});
-				requestAnimationFrame(() => {
+				setTimeout(() => {
 					wrongEls.forEach(el => {
-						el.style.visibility = "";
+						el.style.transition = "none";
+						el.style.opacity = "0";
+						el.style.visibility = "hidden";
+						el.classList.remove("wrong-glow");
+						el.textContent = "";
+
+						const i = parseInt(el.dataset.slotIndex);
+						if (slotSource[i] !== null) {
+							const bottomEl = bottomElements[slotSource[i]];
+							if (bottomEl) bottomEl.classList.remove("futhark-overview-grid-tile-disabled");
+							slotSource[i] = null;
+						}
 					});
+
+					currentSlot = findFirstEmpty();
+					updateCursorLocal();
+					locked = false;
+
+					wrongEls.forEach(el => { el.style.opacity = ""; });
 					requestAnimationFrame(() => {
-						wrongEls.forEach(el => {
-							el.style.transition = "";
+						wrongEls.forEach(el => { el.style.visibility = ""; });
+						requestAnimationFrame(() => {
+							wrongEls.forEach(el => { el.style.transition = ""; });
 						});
 					});
-				});
-			}, 400);
-		}, 800);
+				}, 400);
+			}, 800);
+		}
 	}
+
+	// Top slot click
+	topElements.forEach((el, i) => {
+		el.addEventListener("click", () => {
+			if (locked) return;
+			if (el.classList.contains("correct-glow")) return;
+
+			if (slotSource[i] !== null) {
+				const bottomEl = bottomElements[slotSource[i]];
+				if (bottomEl) bottomEl.classList.remove("futhark-overview-grid-tile-disabled");
+				slotSource[i] = null;
+				el.textContent = "";
+				el.classList.remove("wrong-glow", "correct-glow");
+				currentSlot = i;
+				updateCursorLocal();
+			} else {
+				currentSlot = i;
+				updateCursorLocal();
+			}
+		});
+	});
+
+	// Bottom tile click
+	bottomElements.forEach((div, bottomIdx) => {
+		div.addEventListener("click", () => {
+			if (locked) return;
+			if (div.classList.contains("futhark-overview-grid-tile-disabled")) return;
+			if (currentSlot >= topElements.length) return;
+
+			const letter = div.dataset.property;
+			div.classList.add("futhark-overview-grid-tile-disabled");
+
+			const topEl = topElements[currentSlot];
+			topEl.textContent = letter;
+			slotSource[currentSlot] = bottomIdx;
+
+			const totalSlots = topElements.length;
+			const allFilled = slotSource.every(s => s !== null);
+			if (allFilled) {
+				currentSlot = -1;
+				updateCursorLocal();
+				setTimeout(checkAnswer, 150);
+			} else {
+				let next = -1;
+				for (let offset = 1; offset <= totalSlots; offset++) {
+					const candidate = (currentSlot + offset) % totalSlots;
+					if (slotSource[candidate] === null) { next = candidate; break; }
+				}
+				currentSlot = next;
+				updateCursorLocal();
+			}
+		});
+	});
+
+	// Wire next button
+	nextBtn.addEventListener("click", () => {
+		const targetId = nextBtn.dataset.next;
+		switchPage(targetId, true);
+	});
+
+	// Restore solved state if level was already solved
+	function restoreSolved() {
+		if (!quizSolved[levelIndex]) return;
+		locked = true;
+		// Re-populate slotSource with best-effort matching from bottomElements
+		topElements.forEach((el, i) => {
+			el.textContent = word[i];
+			el.classList.add("correct-glow");
+		});
+		currentSlot = -1;
+		updateCursorLocal();
+		nextBtn.style.transition = "";
+		nextBtn.style.opacity = "1";
+		nextBtn.classList.remove("hidden");
+	}
+
+	updateCursorLocal();
+
+	return { restoreSolved };
 }
 
-// Top slot click: tap filled slot to delete, tap empty slot to move cursor
-quizTopElements.forEach((el, i) => {
-	el.addEventListener("click", () => {
-		if (quizLocked) return;
-		if (el.classList.contains("correct-glow")) return; // can't delete correct
-
-		if (quizSlotSource[i] !== null) {
-			// Delete this slot
-			const bottomEl = quizBottomElements[quizSlotSource[i]];
-			if (bottomEl) bottomEl.classList.remove("futhark-overview-grid-tile-disabled");
-			quizSlotSource[i] = null;
-			el.textContent = "";
-			el.classList.remove("wrong-glow", "correct-glow");
-			currentTopElement = i;
-			updateCursor();
-		} else {
-			// Move cursor here
-			currentTopElement = i;
-			updateCursor();
-		}
-	});
+// Build all quiz levels on page load
+quizLevels.forEach((_, i) => {
+	quizStates.push(buildQuiz(i));
 });
 
-quizBottomElements.forEach((div, bottomIdx) => {
-	div.addEventListener("click", () => {
-		if (quizLocked) return;
-		if (div.classList.contains("futhark-overview-grid-tile-disabled")) return;
-		if (currentTopElement >= quizTopElements.length) return;
-
-		const letter = div.dataset.property;
-		div.classList.add("futhark-overview-grid-tile-disabled");
-
-		const topEl = quizTopElements[currentTopElement];
-		topEl.textContent = letter;
-		quizSlotSource[currentTopElement] = bottomIdx;
-
-		// Find next empty slot (search forward wrapping around)
-		const totalSlots = quizTopElements.length;
-		const allFilled = quizSlotSource.every(s => s !== null);
-		if (allFilled) {
-			currentTopElement = -1;
-			updateCursor();
-			setTimeout(checkAnswer, 150);
-		} else {
-			let next = -1;
-			for (let offset = 1; offset <= totalSlots; offset++) {
-				const candidate = (currentTopElement + offset) % totalSlots;
-				if (quizSlotSource[candidate] === null) { next = candidate; break; }
-			}
-			currentTopElement = next;
-			updateCursor();
+// Reset all quiz levels
+function resetAllQuizLevels() {
+	quizSolved.fill(false);
+	quizStates.length = 0;
+	// Re-hide all next buttons
+	["quiz1-next-btn", "quiz2-next-btn", "quiz3-next-btn"].forEach(id => {
+		const btn = document.getElementById(id);
+		if (btn) {
+			btn.classList.add("hidden");
+			btn.style.opacity = "";
+			btn.style.transition = "";
 		}
 	});
-});
+	quizLevels.forEach((_, i) => {
+		quizStates.push(buildQuiz(i));
+	});
+}
+
+// Patch switchPage to handle quiz page transitions
+const _origSwitchPage = switchPage;
+const quizPageIds = new Set(["quiz", "quiz2", "quiz3"]);
+const levelMap = { "quiz": 0, "quiz2": 1, "quiz3": 2 };
+
+switchPage = function(targetId, addToBack) {
+	const currentActive = document.querySelector(".page.active");
+	const leavingQuiz = currentActive && quizPageIds.has(currentActive.id);
+	const enteringQuiz = quizPageIds.has(targetId);
+
+	if (leavingQuiz && !enteringQuiz) {
+		// Leaving quiz pages entirely — reset after page transition completes
+		setTimeout(resetAllQuizLevels, 700);
+	} else if (enteringQuiz) {
+		// Entering a quiz page (from another quiz page) — restore solved state after transition
+		const targetLevel = levelMap[targetId];
+		if (targetLevel !== undefined) {
+			setTimeout(() => quizStates[targetLevel].restoreSolved(), 650);
+		}
+	}
+
+	_origSwitchPage(targetId, addToBack);
+};
 
 // Wheel
 const wheelLetter = "r";
