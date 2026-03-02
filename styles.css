@@ -10,6 +10,7 @@
     --sub-headline-text-color: #BCB82A;
 
     --button-color: #898E23;
+    --alt-button-color: #9079A3;
     --button-text-color: #dee2de;
 
     --menu-bar-color: #444444;
@@ -183,7 +184,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;  /* elements hug the left */
-    width: 40%;               /* 👈 tweak this % */
+    width: 46%;
     overflow: hidden;
 }
 
@@ -251,7 +252,7 @@ p {
 
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
-    padding: 0.4rem 0.8rem;
+    padding: 0.3rem 0.6rem;
     border-radius: 0.2rem;
     background-color: var(--button-color);
     border: none;
@@ -289,16 +290,17 @@ p {
     appearance: none;
     -webkit-appearance: none;
     z-index: 100;
+    white-space: nowrap;
 
     margin-top: 0.0rem;
     margin-bottom: 0.0rem;
     padding: 0.1rem 0.2rem;
     border-radius: 0.2rem;
-    background-color: #9079A3;
+    background-color: var(--alt-button-color);
     border: none;
     cursor: pointer;
     transform: skew(-15deg, 0deg);
-    font-size: 0.4rem;
+    font-size: 0.5rem;
     font-family: "Rethink", sans-serif;
     color: var(--button-text-color);
 
@@ -326,7 +328,17 @@ p {
 }
 
 .alt-button-color {
-    background-color: #9079A3;
+    background-color: var(--alt-button-color);
+}
+
+.button-wrapper {
+    display: inline-block;
+    filter: drop-shadow(0.05rem 0.05rem 0px #535715) drop-shadow(0.1rem 0.1rem 0px #535715) drop-shadow(0.15rem 0.15rem 0px #535715);
+}
+
+.button-wrapper:has(.alt-button-color),
+.button-wrapper:has(.origin-button) {
+    filter: drop-shadow(0.05rem 0.05rem 0px #4a3d5c) drop-shadow(0.1rem 0.1rem 0px #4a3d5c) drop-shadow(0.15rem 0.15rem 0px #4a3d5c);
 }
 
 .default-button-left {
@@ -599,6 +611,7 @@ p {
     box-sizing: border-box;
     border: 2px solid transparent;
     transition: box-shadow 0.35s ease, border-color 0.35s ease, color 0.35s ease;
+    color: var(--alt-button-color);
 }
 
 .quiz-bottom-tile {
@@ -632,6 +645,7 @@ p {
     background: var(--button-color);
     border-radius: 1px;
     opacity: 0.7;
+    background-color: var(--alt-button-color);
 }
 
 .quiz-cursor-dot {
@@ -765,7 +779,7 @@ p {
     border-radius: 3px;
     cursor: pointer;
     overflow: hidden;
-    background: linear-gradient(to right, rgba(144, 121, 163, 0.7) 0%, rgba(144, 121, 163, 0.1) 100%);
+    background: linear-gradient(to right, rgba(144, 121, 163, 0.7) 0%, rgba(144, 121, 163, 0) 100%);
     transition: opacity 0.4s ease;
 }
 
@@ -774,7 +788,7 @@ p {
     top: 0; left: 0;
     height: 100%;
     width: 0%;
-    background-color: #9079A3;
+    background-color: var(--alt-button-color);
     transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1);
     pointer-events: none;
 }

@@ -240,8 +240,8 @@ const possibleFillers = [
 // Quiz level definitions
 const quizLevels = [
 	{ word: ["k", "a", "m", "m"],         topId: "quiz-top",  bottomId: "quiz-bottom",  nextBtnId: "quiz1-next-btn" },
-	{ word: ["s", "t", "e", "i", "n"],    topId: "quiz2-top", bottomId: "quiz2-bottom", nextBtnId: "quiz2-next-btn" },
-	{ word: ["f", "i", "b", "e", "l"],    topId: "quiz3-top", bottomId: "quiz3-bottom", nextBtnId: "quiz3-next-btn" },
+	{ word: ["f", "i", "b", "e", "l"],    topId: "quiz2-top", bottomId: "quiz2-bottom", nextBtnId: "quiz2-next-btn" },
+	{ word: ["p", "f", "e", "i", "l"],    topId: "quiz3-top", bottomId: "quiz3-bottom", nextBtnId: "quiz3-next-btn" },
 ];
 
 // Solved state per level
@@ -778,4 +778,15 @@ function castVote(id) {
     });
 
     document.getElementById("vote-weiter").classList.add("visible");
+}
+
+function resetVote() {
+    hasVoted = false;
+    document.querySelectorAll(".vote-bar").forEach(bar => {
+        bar.querySelector(".vote-fill").style.width = "0%";
+        bar.querySelector(".vote-pct").textContent = "";
+        bar.style.opacity = "";
+        bar.style.cursor = "";
+    });
+    document.getElementById("vote-weiter").classList.remove("visible");
 }
