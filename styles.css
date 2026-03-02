@@ -289,7 +289,7 @@ p {
     position: absolute;
     appearance: none;
     -webkit-appearance: none;
-    z-index: 100;
+    z-index: 102;
     white-space: nowrap;
 
     margin-top: 0.0rem;
@@ -546,6 +546,7 @@ p {
     display: flex;
     align-items: center;
     justify-content: center;
+    pointer-events: none;
 
     position: relative; /* 🔥 important */
 }
