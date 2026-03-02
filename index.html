@@ -222,12 +222,14 @@
             </div> -->
             <div class="center-container-split">
                 <div class="center-container-split-left">
-                    <button class="default-button interaction-change-page" data-next="quiz">Minispiel: Errate die
-                        Runen!</button>
+                    <button class="default-button default-button-left alt-button-color interaction-change-page"
+                        data-next="quiz">Minispiel: Errate die
+                        Runen!<br><img src="imgs/minigame_icon_1.png" style="height: 2rem;"></button>
                 </div>
 
                 <div class="center-container-split-right">
-                    <button class="default-button interaction-change-page" data-next="origin">Erforsche die Herkunft der
+                    <button class="default-button default-button-right interaction-change-page"
+                        data-next="origin">Erforsche die Herkunft der
                         Runen!</button>
                 </div>
             </div>
@@ -252,8 +254,67 @@
             </div>
 
             <div class="center-container">
+                <div class="rune-origin-lang" style="left: 10%; top: 27.5%;">
+                    <span class="rune-origin-lang-sub">XXXXXXXX</span>
+                    <span class="rune-origin-lang-main">Ägyptische Hieroglyphen</span>
+                    <span class="rune-origin-lang-sub">ca. 3200 v. Chr.-394 n. Chr.</span>
+                </div>
+
+                <div class="rune-origin-lang" style="left: 62%; top: 33%;">
+                    <span class="rune-origin-lang-sub">XXXXXXXX</span>
+                    <span class="rune-origin-lang-main">Protosinaitische Schrift</span>
+                    <span class="rune-origin-lang-sub">ca. 1700-1500 v. Chr.</span>
+                </div>
+
+                <div class="rune-origin-lang" style="left: 19%; top: 37.5%;">
+                    <span class="rune-origin-lang-sub">XXXXXXXX</span>
+                    <span class="rune-origin-lang-main">Phönizisch Schrift</span>
+                    <span class="rune-origin-lang-sub">11.-2. Jh. v. Chr.</span>
+                </div>
+                <button class="origin-button interaction-change-page" style="left: 44%; top: 40.5%;"
+                    data-next="thesispho">
+                    Phönizisch-Punische<br>These
+                </button>
+
+                <div class="rune-origin-lang" style="left: 66%; top: 52%;">
+                    <span class="rune-origin-lang-sub">XXXXXXXX</span>
+                    <span class="rune-origin-lang-main">Griechische Schrift</span>
+                    <span class="rune-origin-lang-sub">9.Jh. v. Chr. bis heute</span>
+                </div>
+                <button class="origin-button interaction-change-page" style="left: 46%; top: 50.5%;"
+                    data-next="thesisgre">
+                    Griehische<br>These
+                </button>
+
+                <div class="rune-origin-lang" style="left: 6.5%; top: 51%;">
+                    <span class="rune-origin-lang-sub">XXXXXXXX</span>
+                    <span class="rune-origin-lang-main">Etruskische Schrift</span>
+                    <span class="rune-origin-lang-sub">7.-1. Jh. v. Chr. bis heute</span>
+                </div>
+
+                <div class="rune-origin-lang" style="left: 5.5%; top: 73%;">
+                    <span class="rune-origin-lang-sub">XXXXXXXX</span>
+                    <span class="rune-origin-lang-main">Norditalische Schrift</span>
+                    <span class="rune-origin-lang-sub">6.-1. Jh. v. Chr.</span>
+                </div>
+                <button class="origin-button interaction-change-page" style="left: 17%; top: 66%;"
+                    data-next="thesisita">
+                    Norditalische<br>These
+                </button>
+
+                <div class="rune-origin-lang" style="left: 57.5%; top: 74%;">
+                    <span class="rune-origin-lang-sub">XXXXXXXX</span>
+                    <span class="rune-origin-lang-main">Lateinische Schrift</span>
+                    <span class="rune-origin-lang-sub">7. Jh. v. Chr. bis heute</span>
+                </div>
+                <button class="origin-button interaction-change-page" style="left: 72%; top: 65.5%;"
+                    data-next="thesislat">
+                    Lateinische<br>These
+                </button>
+
                 <div class="rune-origin">
-                    <img class="rune-origin-placeholder" src="imgs/tree_placeholder.png">
+                    <img class="rune-origin-placeholder" src="imgs/tree_line_2.png">
+
                 </div>
             </div>
 
@@ -275,13 +336,92 @@
             </div> -->
             <div class="center-container-split">
                 <div class="center-container-split-left">
-                    <button class="default-button interaction-change-page" data-next="wheel">Minispiel: Vergleiche die
-                        Alphabete!</button>
+                    <button class="default-button default-button-left alt-button-color interaction-change-page"
+                        data-next="wheel">Minispiel: Vergleiche die
+                        Alphabete!<br><img src="imgs/minigame_icon_2.png" style="height: 2rem;"></button>
                 </div>
 
                 <div class="center-container-split-right">
-                    <button class="default-button interaction-change-page" data-next="start">Weiter!</button>
+                    <button class="default-button default-button-right interaction-change-page"
+                        data-next="thesisvote">Weiter!</button>
                 </div>
+            </div>
+        </div>
+
+        <div id="thesisvote" class="page">
+            <div class="top-spacer"></div>
+
+            <div class="center-container">
+                <div class="headline-container">
+                    <h1 class="headline">Welche These überzeugt dich?</h1>
+                </div>
+            </div>
+
+            <div class="center-container">
+                <p class="sub-headline">Tippe auf eine These, um abzustimmen.</p>
+            </div>
+
+            <div class="vote-list">
+                <div class="vote-bar" data-id="lat" onclick="castVote('lat')">
+                    <div class="vote-fill"></div>
+                    <span class="vote-label">Lateinische These</span>
+                    <span class="vote-pct"></span>
+                </div>
+                <div class="vote-bar" data-id="nor" onclick="castVote('nor')">
+                    <div class="vote-fill"></div>
+                    <span class="vote-label">Norditalische These</span>
+                    <span class="vote-pct"></span>
+                </div>
+                <div class="vote-bar" data-id="pho" onclick="castVote('pho')">
+                    <div class="vote-fill"></div>
+                    <span class="vote-label">Phönizisch-Punische These</span>
+                    <span class="vote-pct"></span>
+                </div>
+                <div class="vote-bar" data-id="gre" onclick="castVote('gre')">
+                    <div class="vote-fill"></div>
+                    <span class="vote-label">Griechische These</span>
+                    <span class="vote-pct"></span>
+                </div>
+            </div>
+
+            <div class="center-container button-spacer"></div>
+
+            <div class="center-container">
+                <button id="vote-weiter" class="default-button interaction-change-page"
+                    data-next="end">Weiter!</button>
+            </div>
+        </div>
+
+        <div id="end" class="page">
+            <div class="top-spacer"></div>
+
+            <div class="center-container">
+                <div class="headline-container">
+                    <h1 class="headline">Runen</h1>
+                </div>
+            </div>
+
+            <div class="center-container">
+                <p class="sub-headline">Ein Mix aus Einflüssen.</p>
+            </div>
+
+            <div class="center-container">
+                <div class="text-container">
+                    <p>Die Herkunft der Runen lässt sich nicht eindeutig auf ein einzelnes Alphabet zurückführen. Jede
+                        der vorgestellten Thesen bringt überzeugende Argumente mit, aber ebenso Punkte, die dagegen
+                        sprechen. Eine weitere Möglichkeit zur Erklärung der Herkunft ist, dass mehrere Alphabete
+                        Einfluss nahmen. Germanen könnten mit verschiedenen Schriftsystemen in Kontakt gekommen sein,
+                        ohne sie vollständig zu beherrschen. Entscheidend war weniger das exakte Vorbild als die
+                        Erkenntnis, dass Laute durch Zeichen festgehalten werden können. So entstand ein eigenes System:
+                        einige Formen wurden übernommen und so angepasst, dass sie zu den eigenen Vorstellungen und zur
+                        Sprache der Germanen passten.</p>
+                </div>
+            </div>
+
+            <div class="center-container button-spacer"></div>
+
+            <div class="center-container">
+                <button class="default-button interaction-change-page" data-next="start">Zurück zum Anfang!</button>
             </div>
         </div>
 
@@ -313,7 +453,8 @@
             </div>
 
             <div class="center-container" style="margin-top: 1rem;">
-                <button id="quiz1-next-btn" class="default-button quiz-next-btn hidden" data-next="quiz2">Weiter zu Level 2 →</button>
+                <button id="quiz1-next-btn" class="default-button quiz-next-btn hidden" data-next="quiz2">Weiter zu
+                    Level 2 →</button>
             </div>
         </div>
 
@@ -344,7 +485,8 @@
             </div>
 
             <div class="center-container" style="margin-top: 1rem;">
-                <button id="quiz2-next-btn" class="default-button quiz-next-btn hidden" data-next="quiz3">Weiter zu Level 3 →</button>
+                <button id="quiz2-next-btn" class="default-button quiz-next-btn hidden" data-next="quiz3">Weiter zu
+                    Level 3 →</button>
             </div>
         </div>
 
@@ -375,7 +517,8 @@
             </div>
 
             <div class="center-container" style="margin-top: 1rem;">
-                <button id="quiz3-next-btn" class="default-button quiz-next-btn hidden" data-next="futhark">Zurück zum Futhark →</button>
+                <button id="quiz3-next-btn" class="default-button quiz-next-btn hidden" data-next="futhark">Zurück zum
+                    Futhark →</button>
             </div>
         </div>
 
@@ -427,6 +570,137 @@
             </div>
         </div>
 
+        <div id="thesispho" class="page">
+            <div class="top-spacer"></div>
+
+            <div class="center-container">
+                <div class="headline-container">
+                    <h1 class="headline">Phönizisch-Punische These</h1>
+                </div>
+            </div>
+
+            <div class="center-container">
+                <div class="text-container">
+                    <p>Diese Theorie vermutet den Ursprung der Runen in einer Variante des phönizischen Alphabets, das
+                        von den Karthagern – von den Römern Punier genannt – genutzt wurde. Als Seemacht könnten
+                        karthagische Händler ihre Schrift über den Seeweg bis nach Jütland gebracht und dort ihre
+                        Schrift an germanische Gruppen vermittelt haben. Auffällig ist, dass die frühesten
+                        Runeninschriften vor allem in Jütland und auf Fünen auftreten. Ein weiteres Indiz stellt das
+                        Prinzip der „sprechenden Namen“ dar: Wie bei den Runen steht im Phönizischen jedes Zeichen nicht
+                        nur für einen Laut, sondern auch für ein Wort. So steht das erste phönizische Zeichen Aleph für
+                        „Rind“, während die erste Rune Fehu „Vieh“ bedeutet. Dennoch ist die These umstritten, da dies
+                        die einzige Übereinstimmung ist und außerdem archäologische Belege für eine karthagische Präsenz
+                        an der Nordsee fehlen.</p>
+                </div>
+            </div>
+
+            <img src="imgs/pho_funde.png" alt="" style="
+                position: absolute;
+                bottom: -12.5%;
+                left: 0;
+                width: 100%;
+                height: auto;
+                pointer-events: none;
+            " />
+        </div>
+
+        <div id="thesislat" class="page">
+            <div class="top-spacer"></div>
+
+            <div class="center-container">
+                <div class="headline-container">
+                    <h1 class="headline">Lateinische These</h1>
+                </div>
+            </div>
+
+            <div class="center-container">
+                <div class="text-container">
+                    <p>Diese These vermutet den Ursprung der Runen im lateinischen Alphabet, also in dem Schriftsystem,
+                        das wir in einer weiterentwickelten Form bis heute verwenden. Das stärkste Argument dafür
+                        liefert die Kontaktzone zwischen Römern und Germanen am Rhein. Hier begegneten germanische
+                        Söldner und Händler ab dem 1. Jahrhundert v. Chr. der römischen Schriftkultur. Doch während
+                        einige Runen deutliche Parallelen in Form und Lautwert zum lateinischen Alphabet aufweisen,
+                        weicht der Großteil der Runen davon ab. Dies wirft eine entscheidende Frage auf: Wenn der
+                        kulturelle Austausch so intensiv war, warum entwickelten sich die Runen dann optisch so
+                        eigenständig? Müssten die Runen den lateinischen Buchstaben nicht viel stärker ähneln, wenn
+                        diese ihre Vorlage waren?</p>
+                </div>
+            </div>
+
+            <img src="imgs/lat_funde.png" alt="" style="
+                position: absolute;
+                bottom: -10%;
+                left: 0;
+                width: 100%;
+                height: auto;
+                pointer-events: none;
+            " />
+        </div>
+
+        <div id="thesisgre" class="page">
+            <div class="top-spacer"></div>
+
+            <div class="center-container">
+                <div class="headline-container">
+                    <h1 class="headline">Griechische These</h1>
+                </div>
+            </div>
+
+            <div class="center-container">
+                <div class="text-container">
+                    <p>Diese Theorie vermutet den Ursprung der Runen in einer Variante der griechischen Schrift, die im
+                        antiken Gallien verwendet wurde. Über den Kontakt zwischen Kelten und Germanen – etwa durch
+                        Söldner oder Handelsbeziehungen – könnten die Zeichen im 1. Jahrhundert v. Chr. übermittelt
+                        worden sein. Tatsächlich weisen viele Runen optische Ähnlichkeiten zu griechischen Vorbildern
+                        auf, wenn man eine Anpassung an harte Materialien annimmt: Durch das Vermeiden von Rundungen und
+                        waagerechten Strichen ließen sich die Zeichen leichter in Holz oder Stein ritzen. Doch dieser
+                        Erklärungsansatz ist umstritten, da gerade die ältesten Runenfunde keineswegs nur kantig waren,
+                        sondern oft Rundungen aufweisen.</p>
+                </div>
+            </div>
+
+            <img src="imgs/gre_funde.png" alt="" style="
+                position: absolute;
+                bottom: -10%;
+                left: 0;
+                width: 100%;
+                height: auto;
+                pointer-events: none;
+            " />
+        </div>
+
+        <div id="thesisita" class="page">
+            <div class="top-spacer"></div>
+
+            <div class="center-container">
+                <div class="headline-container">
+                    <h1 class="headline">Norditalische These</h1>
+                </div>
+            </div>
+
+            <div class="center-container">
+                <div class="text-container">
+                    <p>Diese These vermutet die Wurzeln der Runen in den antiken Alphabeten Norditaliens. Dafür spricht
+                        die auffällige optische Ähnlichkeit vieler Runen mit norditalischen Schriftzeichen. Als mögliche
+                        Vermittler kommen benachbarte keltische Gruppen in Frage, zu denen Germanen Handelskontakte
+                        pflegten. Obwohl direkte archäologische Belege selten sind, liefert ein besonderer Fund einen
+                        wichtigen Hinweis: Ein etruskischer Helm aus dem Depotfund von Negau im heutigen Slowenien trägt
+                        eine Inschrift in norditalischen Buchstaben, nennt jedoch den germanischen Namen „Harigast“.
+                        Dieses Objekt gilt als bemerkenswertes, wenn auch seltenes Indiz für Kontakte zwischen
+                        germanischen Gruppen und norditalischen Schreibern.</p>
+                </div>
+            </div>
+
+            <img src="imgs/ita_funde.png" alt="" style="
+                position: absolute;
+                bottom: -10%;
+                left: 0;
+                width: 100%;
+                height: auto;
+                pointer-events: none;
+            " />
+        </div>
+
         <div id="menu-bar">
             <div class="menu-item-container">
                 <img src="imgs/back.png" class="menu-item-image" id="back-button">
@@ -435,7 +709,7 @@
                 <img src="imgs/home.png" class="menu-item-image" id="home-button">
             </div>
             <div class="menu-item-container">
-                <img src="imgs/Sprache_EN_bright.svg" class="menu-item-image">
+                <img src="imgs/lang_en.png" class="menu-item-image">
             </div>
         </div>
 

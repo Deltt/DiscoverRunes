@@ -533,7 +533,7 @@ let selectedLetterElement;
 const wheelCheckButton = document.getElementById("wheel-check-button");
 let freezeWheel = false;
 
-wheelCheckButton.addEventListener("click", () => {
+wheelCheckButton && wheelCheckButton.addEventListener("click", () => {
 	if (selectedLetter == wheelLetter) {
 		freezeWheel = true;
 		selectedLetterElement.style.transition = "";
@@ -755,4 +755,27 @@ function applyGlow(elements, {
 			els.forEach(el => el.classList.remove(className));
 		}, duration);
 	}
+}
+// ── Voting Page ──────────────────────────────────────────────
+// ── Voting Page ──────────────────────────────────────────────
+const voteData = { lat: 42, nor: 18, pho: 27, gre: 13 };
+let hasVoted = false;
+
+function castVote(id) {
+    if (hasVoted) return;
+    hasVoted = true;
+    voteData[id]++;
+
+    const total = Object.values(voteData).reduce((s, v) => s + v, 0);
+
+    document.querySelectorAll(".vote-bar").forEach(bar => {
+        const barId = bar.dataset.id;
+        const pct = Math.round((voteData[barId] / total) * 100);
+        bar.querySelector(".vote-fill").style.width = pct + "%";
+        bar.querySelector(".vote-pct").textContent = pct + "%";
+        if (barId !== id) bar.style.opacity = "0.5";
+        bar.style.cursor = "default";
+    });
+
+    document.getElementById("vote-weiter").classList.add("visible");
 }
