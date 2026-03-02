@@ -42,17 +42,17 @@
 
 @font-face {
     font-family: "Futhark";
-    src: url("fonts/Futhark-Regular.ttf");
+    src: url("fonts/runischeFontFinal-Regular.ttf");
 }
 
 @font-face {
     font-family: "gre";
-    src: url("fonts/GriechischeFont3-Regular.ttf");
+    src: url("fonts/GriechischeFontFinal-Regular.ttf");
 }
 
 @font-face {
     font-family: "ven";
-    src: url("fonts/VenetischeSchrift3-Regular.ttf");
+    src: url("fonts/VenetischeSchriftFinal-Regular.ttf");
 }
 
 @font-face {
@@ -183,7 +183,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: flex-start;  /* elements hug the left */
+    align-items: flex-start;
     width: 46%;
     overflow: hidden;
 }
@@ -192,8 +192,8 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: flex-end;    /* elements hug the right */
-    flex: 1;                  /* takes remaining space */
+    align-items: flex-end;
+    flex: 1;
     overflow: hidden;
 }
 
@@ -360,12 +360,9 @@ p {
     grid-template-columns: repeat(6, 1fr);
     /* 5 columns */
     gap: 1.0rem;
-    /* spacing between elements */
     /* background: red; */
     justify-items: center;
-    /* optional: center items in cell horizontally */
     align-items: center;
-    /* optional: center items vertically */
     position: relative;
 }
 
@@ -382,12 +379,11 @@ p {
     height: 2.5rem;
     padding-top: 0.5rem;
     width: 2.0rem;
-    /* fills the grid cell width */
     background: var(--button-color);
     /* box-shadow: 0.2rem 0.2rem #00000085; */
 
     clip-path: polygon(
-        0% 0%,      /* top-left */
+        0% 0%,
 
         60% 0%,
         63% 5%,
@@ -440,7 +436,6 @@ p {
     pointer-events: auto;
     z-index: 10;
 
-    /* 👇 center overlay contents */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -469,7 +464,7 @@ p {
 
 .futhark-overview-overlay-content {
     display: flex;
-    flex-direction: row;  /* horizontal layout */
+    flex-direction: row;
     align-items: center;
     gap: 1rem;
     width: 100%;
@@ -491,12 +486,11 @@ p {
     flex-direction: column;
     align-items: center;
     gap: 0.3rem;
-    flex: 1;  /* takes remaining space */
+    flex: 1;
 }
 
 #futhark-overview-overlay-closebox {
     position: absolute;
-    /* stays in top-right corner */
     top: 5%;
     right: 5%;
     width: 1rem;
@@ -507,13 +501,9 @@ p {
     border-radius: 100px;
 
     display: flex;
-    /* make it a flex container */
     justify-content: center;
-    /* horizontal centering */
     align-items: center;
-    /* vertical centering */
     text-align: center;
-    /* optional for text */
     font-size: 0.5rem;
 }
 
@@ -548,7 +538,7 @@ p {
     justify-content: center;
     pointer-events: none;
 
-    position: relative; /* 🔥 important */
+    position: relative;
 }
 
 .rune-origin-placeholder {
@@ -561,9 +551,9 @@ p {
     position: absolute;
     display: flex;
     flex-direction: column;
-    justify-content: center;  /* horizontal */
+    justify-content: center;
     align-content: center;
-    align-items: center;      /* vertical */
+    align-items: center;
 }
 
 .rune-origin-lang-main {
@@ -622,7 +612,6 @@ p {
     border-radius: 0.4rem;
     height: 3.2rem;
     width: 2.0rem;
-    /* fills the grid cell width */
     background: var(--button-color);
     font-size: 2rem;
     box-shadow: 0.2rem 0.2rem #00000085;
@@ -699,7 +688,7 @@ p {
 
 .wheel-fixed-entry {
     font-family: "Futhark";
-    pointer-events: none; /* Make non-interactable */
+    pointer-events: none;
 }
 
 #wheel-main {
@@ -763,7 +752,7 @@ p {
 .quiz-next-btn.hidden {
     display: none !important;
 }
-/* ── Voting Page ── */
+/* Voting Page */
 .vote-list {
     display: flex;
     flex-direction: column;

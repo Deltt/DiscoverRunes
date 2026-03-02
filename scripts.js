@@ -134,13 +134,13 @@ function switchPage(targetId, addToBack) {
 
 	if (!current || !next) return;
 
-	// 1️⃣ Fade-out current page
+	// 1Fade-out current page
 	current.style.transition = "opacity 0.4s ease, transform 0.4s ease";
 	current.style.opacity = "0";
 	current.style.transform = "translateY(-0.5rem)";
 	current.style.pointerEvents = "none";
 
-	// 2️⃣ Wait for fade-out + pause
+	// Wait for fade-out + pause
 	setTimeout(() => {
 		// remove current page
 		current.classList.remove("active");
@@ -149,7 +149,7 @@ function switchPage(targetId, addToBack) {
 		current.style.transition = "";
 		current.style.pointerEvents = "";
 
-		// 3️⃣ Prepare next page slightly above (will move down)
+		// Prepare next page slightly above (will move down)
 		next.style.opacity = "0";
 		next.style.transform = "translateY(-0.5rem)";
 		next.style.pointerEvents = "none";
@@ -157,7 +157,7 @@ function switchPage(targetId, addToBack) {
 		// add active
 		next.classList.add("active");
 
-		// 4️⃣ Trigger fade-in
+		// Trigger fade-in
 		requestAnimationFrame(() => {
 			requestAnimationFrame(() => {
 				next.style.transition = "opacity 0.4s ease, transform 0.4s ease";
@@ -228,10 +228,8 @@ document.querySelectorAll(".futhark-overview-grid-tile").forEach(btn => {
 document.getElementById("futhark-overview-overlay-closebox").addEventListener("click", () => {
 	hideOverlay();
 });
-// =====================
-// Multi-Level Quiz System
-// =====================
 
+// Multi-Level Quiz System
 const possibleFillers = [
 	"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
 	"n", "o", "p", "q", "r", "s", "t", "u", "w", "x", "z"
@@ -756,8 +754,8 @@ function applyGlow(elements, {
 		}, duration);
 	}
 }
-// ── Voting Page ──────────────────────────────────────────────
-// ── Voting Page ──────────────────────────────────────────────
+
+// ── Voting Page
 const voteData = { lat: 42, nor: 18, pho: 27, gre: 13 };
 let hasVoted = false;
 
