@@ -57,7 +57,12 @@
 
 @font-face {
     font-family: "lat";
-    src: url("fonts/LateinischeSchrift-Regular.ttf");
+    src: url("fonts/LateinischeSchriftFinal-Regular.ttf");
+}
+
+@font-face {
+    font-family: "pho";
+    src: url("fonts/PunischeFontfigma3-Regular.ttf");
 }
 
 /* High Level Stuff */
@@ -186,6 +191,7 @@ body {
     align-items: flex-start;
     width: 46%;
     overflow: hidden;
+    padding-left: 2rem;
 }
 
 .center-container-split-right {
@@ -195,6 +201,45 @@ body {
     align-items: flex-end;
     flex: 1;
     overflow: hidden;
+    padding-right: 2rem;
+}
+
+.center-container-split-3 {
+    display: flex;
+    flex-direction: row;
+    height: 2rem;
+    padding-top: 1rem;
+    align-items: center;
+    width: 100%;
+    background: var(--center-container-background);
+    border: var(--center-container-border-thickness) solid black;
+}
+
+.center-container-split-3 > * {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.center-container-split-3 > *:first-child {
+    justify-content: flex-start;
+    padding-left: 2rem;
+}
+
+.center-container-split-3 > *:nth-child(2) {
+    justify-content: center;
+}
+
+.center-container-split-3 > *:last-child {
+    justify-content: flex-end;
+    padding-right: 2rem;
+}
+
+/* Check button disabled state */
+.default-button:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    pointer-events: none;
 }
 
 .right-container {
@@ -260,7 +305,9 @@ p {
     transform: skew(-15deg, 0deg);
     font-size: var(--button-font-size);
     font-family: "Rethink", sans-serif;
+    /* font-family: "Freight", sans-serif; */
     color: var(--button-text-color);
+    text-shadow: 2px 2px 1px #110f0c88;
 
     clip-path: polygon(
         0% 0%,
@@ -285,6 +332,13 @@ p {
     );
 }
 
+/* Check button disabled state */
+.default-button:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
 .origin-button {
     position: absolute;
     appearance: none;
@@ -302,7 +356,9 @@ p {
     transform: skew(-15deg, 0deg);
     font-size: 0.5rem;
     font-family: "Rethink", sans-serif;
+    /* font-family: "Freight", sans-serif; */
     color: var(--button-text-color);
+    text-shadow: 2px 2px 1px #110f0c77;
 
     clip-path: polygon(
         0% 0%,
@@ -418,6 +474,10 @@ p {
     font-size: 2.5rem;
     font-family: "Futhark";
     font-weight: 500;
+
+    text-shadow:
+    0.05rem 0.05rem 0.1rem rgba(255,255,255,0.8),
+   -0.05rem -0.05rem 0.1rem rgba(0,0,0,0.8);
 }
 
 #futhark-overview-overlay {
@@ -477,14 +537,14 @@ p {
     flex-direction: column;
     align-items: center;
     gap: 0.3rem;
-    width: 30%;
+    width: 40%;
     flex-shrink: 0;
 }
 
 .futhark-overview-overlay-right {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: left;
     gap: 0.3rem;
     flex: 1;
 }
@@ -514,12 +574,10 @@ p {
 
 .futhark-overview-overlay-attribute {
     font-size: var(--text-font-size);
-    text-align: center;
 }
 
 .futhark-overview-overlay-text {
     font-size: var(2rem);
-    text-align: center;
 }
 
 .futhark-overview-overlay-attribute2 {
@@ -529,8 +587,8 @@ p {
 
 /* Origin */
 .rune-origin {
-    margin-top: 1.2rem;
-    margin-bottom: 1.0rem;
+    /* margin-top: 1.2rem;
+    margin-bottom: 1.0rem; */
     width: 60%;
     height: 18rem;
     display: flex;
@@ -545,6 +603,12 @@ p {
     position: absolute;
     height: 90%;
     width: 90%;
+}
+
+.rune-origin-placeholder2 {
+    position: absolute;
+    height: 90%;
+    width: 80%;
 }
 
 .rune-origin-lang {
@@ -605,18 +669,6 @@ p {
     color: var(--alt-button-color);
 }
 
-.quiz-bottom-tile {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 0.4rem;
-    height: 3.2rem;
-    width: 2.0rem;
-    background: var(--button-color);
-    font-size: 2rem;
-    box-shadow: 0.2rem 0.2rem #00000085;
-}
-
 .correct-glow {
     box-shadow: 0 0 12px var(--button-color);
     border-color: var(--button-color);
@@ -654,13 +706,32 @@ p {
 
 /* Wheel */
 .wheel-container {
-    margin: 0.5rem 0;
+    margin-top: 0.5rem;
     width: 85%;
     height: 16rem;
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
+}
+
+.wheel-label-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1.0rem;
+    margin-bottom: 0;
+    overflow: hidden;
+}
+
+.wheel-label {
+    font-size: 0.7rem;
+    color: var(--text-color);
+    opacity: 0.6;
+    text-align: center;
+    width: 20%;
+    line-height: 1.3;
 }
 
 .wheel-fixed {
@@ -671,6 +742,7 @@ p {
     border-radius: 0.4rem;
     position: relative;
     overflow: hidden;
+    padding-bottom: 1.9rem;
     
     -webkit-mask-image: linear-gradient(to bottom,
             transparent 0%,
@@ -692,6 +764,7 @@ p {
 }
 
 #wheel-main {
+    touch-action: none;
     height: 20rem;
     width: 3rem;
     margin: 0 0.5rem;
@@ -814,4 +887,152 @@ p {
 #vote-weiter.visible {
     opacity: 1;
     pointer-events: auto;
+}
+
+
+
+/* TRY TO MAKE CLICKABLE */
+
+/* =============================================
+   FUTHARK TILE CLICKABILITY CUES
+   ============================================= */
+
+/* --- EFFECT A: Ember Pulse ---
+   Animates the drop-shadow on the wrapper so it
+   correctly traces the clip-path silhouette.
+   Each tile pulses independently via staggered delay. */
+
+/* @keyframes ember-pulse {
+    0%,  100% { filter: drop-shadow(0.05rem 0.05rem 0px #535715) drop-shadow(0.1rem 0.1rem 0px #535715) drop-shadow(0.15rem 0.15rem 0px #535715); }
+    50%        { filter: drop-shadow(0.05rem 0.05rem 0px #a09a1a) drop-shadow(0.0rem 0.0rem 0.35rem #c8b822cc) drop-shadow(0.0rem 0.0rem 0.6rem #bcaa1888); }
+} */
+
+/* .futhark-overview-grid-tile-wrapper:not(:has(.futhark-overview-grid-tile-disabled)) {
+    animation: ember-pulse 3.2s ease-in-out infinite;
+}
+
+.futhark-overview-grid-tile-wrapper:nth-child(1)  { animation-delay: 0.0s; }
+.futhark-overview-grid-tile-wrapper:nth-child(2)  { animation-delay: 0.4s; }
+.futhark-overview-grid-tile-wrapper:nth-child(3)  { animation-delay: 1.1s; }
+.futhark-overview-grid-tile-wrapper:nth-child(4)  { animation-delay: 0.7s; }
+.futhark-overview-grid-tile-wrapper:nth-child(5)  { animation-delay: 2.1s; }
+.futhark-overview-grid-tile-wrapper:nth-child(6)  { animation-delay: 1.6s; }
+.futhark-overview-grid-tile-wrapper:nth-child(7)  { animation-delay: 0.3s; }
+.futhark-overview-grid-tile-wrapper:nth-child(8)  { animation-delay: 2.8s; }
+.futhark-overview-grid-tile-wrapper:nth-child(9)  { animation-delay: 1.3s; }
+.futhark-overview-grid-tile-wrapper:nth-child(10) { animation-delay: 0.9s; }
+.futhark-overview-grid-tile-wrapper:nth-child(11) { animation-delay: 2.4s; }
+.futhark-overview-grid-tile-wrapper:nth-child(12) { animation-delay: 0.2s; }
+.futhark-overview-grid-tile-wrapper:nth-child(13) { animation-delay: 1.8s; }
+.futhark-overview-grid-tile-wrapper:nth-child(14) { animation-delay: 3.0s; }
+.futhark-overview-grid-tile-wrapper:nth-child(15) { animation-delay: 0.6s; }
+.futhark-overview-grid-tile-wrapper:nth-child(16) { animation-delay: 2.2s; }
+.futhark-overview-grid-tile-wrapper:nth-child(17) { animation-delay: 1.5s; }
+.futhark-overview-grid-tile-wrapper:nth-child(18) { animation-delay: 0.1s; }
+.futhark-overview-grid-tile-wrapper:nth-child(19) { animation-delay: 2.6s; }
+.futhark-overview-grid-tile-wrapper:nth-child(20) { animation-delay: 1.0s; }
+.futhark-overview-grid-tile-wrapper:nth-child(21) { animation-delay: 0.5s; }
+.futhark-overview-grid-tile-wrapper:nth-child(22) { animation-delay: 3.1s; }
+.futhark-overview-grid-tile-wrapper:nth-child(23) { animation-delay: 1.9s; }
+.futhark-overview-grid-tile-wrapper:nth-child(24) { animation-delay: 0.8s; }
+
+.futhark-overview-grid-tile-wrapper:active {
+    animation-play-state: paused;
+} */
+
+
+/* --- EFFECT B: Rolling Wave ---
+   A diagonal glint sweeps across each tile in sequence.
+   The ::before is automatically clipped by the parent's clip-path. */
+
+/* @keyframes glint-sweep {
+    0%        { transform: translateX(-160%) skewX(-20deg); opacity: 0; }
+    10%       { opacity: 1; }
+    40%, 100% { transform: translateX(200%) skewX(-20deg);  opacity: 0; }
+}
+
+
+.futhark-overview-grid-tile:not(.futhark-overview-grid-tile-disabled) {
+    overflow: hidden;
+    position: relative;
+}
+
+.futhark-overview-grid-tile:not(.futhark-overview-grid-tile-disabled)::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        105deg,
+        transparent 30%,
+        rgba(255, 240, 160, 0.55) 50%,
+        transparent 70%
+    );
+    animation: glint-sweep 4.5s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.futhark-overview-grid-tile-wrapper:nth-child(1)  .futhark-overview-grid-tile::before { animation-delay: 0.00s; }
+.futhark-overview-grid-tile-wrapper:nth-child(2)  .futhark-overview-grid-tile::before { animation-delay: 0.15s; }
+.futhark-overview-grid-tile-wrapper:nth-child(3)  .futhark-overview-grid-tile::before { animation-delay: 0.30s; }
+.futhark-overview-grid-tile-wrapper:nth-child(4)  .futhark-overview-grid-tile::before { animation-delay: 0.45s; }
+.futhark-overview-grid-tile-wrapper:nth-child(5)  .futhark-overview-grid-tile::before { animation-delay: 0.60s; }
+.futhark-overview-grid-tile-wrapper:nth-child(6)  .futhark-overview-grid-tile::before { animation-delay: 0.75s; }
+.futhark-overview-grid-tile-wrapper:nth-child(7)  .futhark-overview-grid-tile::before { animation-delay: 0.90s; }
+.futhark-overview-grid-tile-wrapper:nth-child(8)  .futhark-overview-grid-tile::before { animation-delay: 1.05s; }
+.futhark-overview-grid-tile-wrapper:nth-child(9)  .futhark-overview-grid-tile::before { animation-delay: 1.20s; }
+.futhark-overview-grid-tile-wrapper:nth-child(10) .futhark-overview-grid-tile::before { animation-delay: 1.35s; }
+.futhark-overview-grid-tile-wrapper:nth-child(11) .futhark-overview-grid-tile::before { animation-delay: 1.50s; }
+.futhark-overview-grid-tile-wrapper:nth-child(12) .futhark-overview-grid-tile::before { animation-delay: 1.65s; }
+.futhark-overview-grid-tile-wrapper:nth-child(13) .futhark-overview-grid-tile::before { animation-delay: 1.80s; }
+.futhark-overview-grid-tile-wrapper:nth-child(14) .futhark-overview-grid-tile::before { animation-delay: 1.95s; }
+.futhark-overview-grid-tile-wrapper:nth-child(15) .futhark-overview-grid-tile::before { animation-delay: 2.10s; }
+.futhark-overview-grid-tile-wrapper:nth-child(16) .futhark-overview-grid-tile::before { animation-delay: 2.25s; }
+.futhark-overview-grid-tile-wrapper:nth-child(17) .futhark-overview-grid-tile::before { animation-delay: 2.40s; }
+.futhark-overview-grid-tile-wrapper:nth-child(18) .futhark-overview-grid-tile::before { animation-delay: 2.55s; }
+.futhark-overview-grid-tile-wrapper:nth-child(19) .futhark-overview-grid-tile::before { animation-delay: 2.70s; }
+.futhark-overview-grid-tile-wrapper:nth-child(20) .futhark-overview-grid-tile::before { animation-delay: 2.85s; }
+.futhark-overview-grid-tile-wrapper:nth-child(21) .futhark-overview-grid-tile::before { animation-delay: 3.00s; }
+.futhark-overview-grid-tile-wrapper:nth-child(22) .futhark-overview-grid-tile::before { animation-delay: 3.15s; }
+.futhark-overview-grid-tile-wrapper:nth-child(23) .futhark-overview-grid-tile::before { animation-delay: 3.30s; }
+.futhark-overview-grid-tile-wrapper:nth-child(24) .futhark-overview-grid-tile::before { animation-delay: 3.45s; } */
+
+
+
+/* --- EFFECT C: Ember Flare (Random Rolling Wave + Scale) ---
+   Triggered via JS — adds .flare-active to one random tile at a time. */
+
+@keyframes ember-flare-glint {
+    0%        { transform: translateX(-160%) skewX(-20deg); opacity: 0; }
+    20%       { opacity: 1; }
+    70%, 100% { transform: translateX(200%) skewX(-20deg); opacity: 0; }
+}
+
+@keyframes ember-flare-scale {
+    0%        { transform: scale(1); }
+    40%       { transform: scale(1.25); }
+    70%       { transform: scale(1.25); }  /* linger at peak */
+    100%      { transform: scale(1); }
+}
+
+#futhark .futhark-overview-grid-tile-wrapper.flare-active {
+    animation: ember-flare-scale 1.8s ease-in-out forwards;
+}
+
+#futhark .futhark-overview-grid-tile-wrapper.flare-active .futhark-overview-grid-tile {
+    overflow: hidden;
+    position: relative;
+}
+
+#futhark .futhark-overview-grid-tile-wrapper.flare-active .futhark-overview-grid-tile::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        105deg,
+        transparent 30%,
+        rgba(255, 240, 160, 0.6) 50%,
+        transparent 70%
+    );
+    animation: ember-flare-glint 2.8s ease-in-out forwards;
+    pointer-events: none;
 }

@@ -51,30 +51,30 @@ const runeMeaningsDE = [
 ];
 
 const runeMeaningsEN = [
-    "Cattle, Wealth",              // 0
-    "Aurochs",                     // 1
-    "Giant, Demon",                // 2
-    "Aesir (pagan god)",           // 3
-    "Ride, Journey, Wagon",        // 4
-    "Ulcer, Disease",              // 5
-    "Gift",                        // 6
-    "Delight, Joy",                // 7
-    "Hail",                        // 8
-    "Distress, Constraint",        // 9
-    "Ice",                         // 10
-    "Year, Harvest",               // 11
-    "Yew",                         // 12
-    "Fruit tree",                  // 13
-    "Elk, Protection",             // 14
-    "Sun",                         // 15
-    "Tyr (god's name)",            // 16
-    "Birch branch",                // 17
-    "Horse",                        // 18
-    "Human, Man",                  // 19
-    "Water, Body of water",        // 20
-    "Ingwaz (god's name)",         // 21
-    "Day",                          // 22
-    "Inherited property"           // 23
+	"Cattle, Wealth",              // 0
+	"Aurochs",                     // 1
+	"Giant, Demon",                // 2
+	"Aesir (pagan god)",           // 3
+	"Ride, Journey, Wagon",        // 4
+	"Ulcer, Disease",              // 5
+	"Gift",                        // 6
+	"Delight, Joy",                // 7
+	"Hail",                        // 8
+	"Distress, Constraint",        // 9
+	"Ice",                         // 10
+	"Year, Harvest",               // 11
+	"Yew",                         // 12
+	"Fruit tree",                  // 13
+	"Elk, Protection",             // 14
+	"Sun",                         // 15
+	"Tyr (god's name)",            // 16
+	"Birch branch",                // 17
+	"Horse",                        // 18
+	"Human, Man",                  // 19
+	"Water, Body of water",        // 20
+	"Ingwaz (god's name)",         // 21
+	"Day",                          // 22
+	"Inherited property"           // 23
 ];
 
 // Show a page by id
@@ -101,13 +101,18 @@ let currentPage = "start";
 const backArray = [];
 document.getElementById("back-button").addEventListener("click", () => {
 	if (isSwitchingPage) return;
-	console.log(backArray.length);
+
+	const currentActive = document.querySelector(".page.active");
+	if (currentActive && quizPageIds && quizPageIds.has(currentActive.id)) {
+		setTimeout(resetAllQuizLevels, 700);
+		_origSwitchPage("futhark", false);
+		return;
+	}
 
 	if (backArray.length > 0) {
 		switchPage(backArray[backArray.length - 1], false);
 		backArray.pop();
 	}
-	//switchPage(lastPage);
 });
 
 document.getElementById("home-button").addEventListener("click", () => {
@@ -237,9 +242,9 @@ const possibleFillers = [
 
 // Quiz level definitions
 const quizLevels = [
-	{ word: ["k", "a", "m", "m"],         topId: "quiz-top",  bottomId: "quiz-bottom",  nextBtnId: "quiz1-next-btn" },
-	{ word: ["f", "i", "b", "e", "l"],    topId: "quiz2-top", bottomId: "quiz2-bottom", nextBtnId: "quiz2-next-btn" },
-	{ word: ["p", "f", "e", "i", "l"],    topId: "quiz3-top", bottomId: "quiz3-bottom", nextBtnId: "quiz3-next-btn" },
+	{ word: ["k", "a", "m", "m"],       topId: "quiz-top",  bottomId: "quiz-bottom",  nextBtnId: "quiz1-next-btn", checkBtnId: "quiz1-check-btn" },
+	{ word: ["f", "i", "b", "e", "l"],  topId: "quiz2-top", bottomId: "quiz2-bottom", nextBtnId: "quiz2-next-btn", checkBtnId: "quiz2-check-btn" },
+	{ word: ["p", "f", "e", "i", "l"],  topId: "quiz3-top", bottomId: "quiz3-bottom", nextBtnId: "quiz3-next-btn", checkBtnId: "quiz3-check-btn" },
 ];
 
 // Solved state per level
@@ -254,6 +259,7 @@ function buildQuiz(levelIndex) {
 	const topContainer = document.getElementById(level.topId);
 	const bottomContainer = document.getElementById(level.bottomId);
 	const nextBtn = document.getElementById(level.nextBtnId);
+	const checkBtn = document.getElementById(level.checkBtnId);
 
 	topContainer.innerHTML = "";
 	bottomContainer.innerHTML = "";
@@ -302,6 +308,8 @@ function buildQuiz(levelIndex) {
 	letters.sort(() => Math.random() - 0.5);
 
 	letters.forEach((letter, idx) => {
+		const wrapper = document.createElement("div");
+		wrapper.classList.add("futhark-overview-grid-tile-wrapper");
 		const div = document.createElement("div");
 		bottomElements.push(div);
 		div.classList.add("futhark-overview-grid-tile");
@@ -310,8 +318,9 @@ function buildQuiz(levelIndex) {
 		div.dataset.property = letter;
 		div.dataset.bottomIndex = idx;
 		p.textContent = letter;
-		bottomContainer.appendChild(div);
 		div.appendChild(p);
+		wrapper.appendChild(div);
+		bottomContainer.appendChild(wrapper);
 	});
 
 	function updateCursorLocal() {
@@ -384,6 +393,10 @@ function buildQuiz(levelIndex) {
 					currentSlot = findFirstEmpty();
 					updateCursorLocal();
 					locked = false;
+					checkBtn.disabled = true;
+					bottomElements.forEach((bEl, bIdx) => {
+						if (!slotSource.includes(bIdx)) bEl.classList.remove("futhark-overview-grid-tile-disabled");
+					});
 
 					wrongEls.forEach(el => { el.style.opacity = ""; });
 					requestAnimationFrame(() => {
@@ -393,7 +406,7 @@ function buildQuiz(levelIndex) {
 						});
 					});
 				}, 400);
-			}, 800);
+			}, 2600);
 		}
 	}
 
@@ -409,6 +422,10 @@ function buildQuiz(levelIndex) {
 				slotSource[i] = null;
 				el.textContent = "";
 				el.classList.remove("wrong-glow", "correct-glow");
+				checkBtn.disabled = true;
+				bottomElements.forEach((bEl, bIdx) => {
+					if (!slotSource.includes(bIdx)) bEl.classList.remove("futhark-overview-grid-tile-disabled");
+				});
 				currentSlot = i;
 				updateCursorLocal();
 			} else {
@@ -434,10 +451,11 @@ function buildQuiz(levelIndex) {
 
 			const totalSlots = topElements.length;
 			const allFilled = slotSource.every(s => s !== null);
+			checkBtn.disabled = !allFilled;
 			if (allFilled) {
 				currentSlot = -1;
 				updateCursorLocal();
-				setTimeout(checkAnswer, 150);
+				bottomElements.forEach(el => el.classList.add("futhark-overview-grid-tile-disabled"));
 			} else {
 				let next = -1;
 				for (let offset = 1; offset <= totalSlots; offset++) {
@@ -448,6 +466,13 @@ function buildQuiz(levelIndex) {
 				updateCursorLocal();
 			}
 		});
+	});
+
+	// Wire check button
+	checkBtn.addEventListener("click", () => {
+		if (checkBtn.disabled || locked) return;
+		checkBtn.disabled = true;
+		setTimeout(checkAnswer, 150);
 	});
 
 	// Wire next button
@@ -495,6 +520,10 @@ function resetAllQuizLevels() {
 			btn.style.transition = "";
 		}
 	});
+	["quiz1-check-btn", "quiz2-check-btn", "quiz3-check-btn"].forEach(id => {
+		const btn = document.getElementById(id);
+		if (btn) btn.disabled = true;
+	});
 	quizLevels.forEach((_, i) => {
 		quizStates.push(buildQuiz(i));
 	});
@@ -505,16 +534,14 @@ const _origSwitchPage = switchPage;
 const quizPageIds = new Set(["quiz", "quiz2", "quiz3"]);
 const levelMap = { "quiz": 0, "quiz2": 1, "quiz3": 2 };
 
-switchPage = function(targetId, addToBack) {
+switchPage = function (targetId, addToBack) {
 	const currentActive = document.querySelector(".page.active");
 	const leavingQuiz = currentActive && quizPageIds.has(currentActive.id);
 	const enteringQuiz = quizPageIds.has(targetId);
 
-	if (leavingQuiz && !enteringQuiz) {
-		// Leaving quiz pages entirely — reset after page transition completes
-		setTimeout(resetAllQuizLevels, 700);
-	} else if (enteringQuiz) {
-		// Entering a quiz page (from another quiz page) — restore solved state after transition
+	if (leavingQuiz || enteringQuiz) addToBack = false;
+
+	if (enteringQuiz) {
 		const targetLevel = levelMap[targetId];
 		if (targetLevel !== undefined) {
 			setTimeout(() => quizStates[targetLevel].restoreSolved(), 650);
@@ -543,7 +570,7 @@ wheelCheckButton && wheelCheckButton.addEventListener("click", () => {
 		selectedLetterElement.style.transition = "";
 		applyGlow(selectedLetterElement, {
 			className: "wrong-glow",
-			duration: 300
+			duration: 3000
 		});
 	}
 });
@@ -558,7 +585,7 @@ const referenceWheels = [
 
 const stepRem = 4;
 const entryOffset = -3.35; // For main wheel
-const referenceEntryOffset = -2.0; // For reference wheels - adjust this value
+const referenceEntryOffset = -1.0; // For reference wheels - adjust this value
 
 // Initialize reference wheels - FIXED to wheelLetter
 referenceWheels.forEach(wheel => {
@@ -566,13 +593,13 @@ referenceWheels.forEach(wheel => {
 	container.innerHTML = ""; // Clear existing content
 	container.style.position = "relative";
 	container.style.overflow = "hidden";
-	
+
 	const letters = wheel.letters;
 	const totalLetters = letters.length;
 	const wheelLetterIndex = letters.indexOf(wheelLetter);
-	
+
 	if (wheelLetterIndex === -1) return;
-	
+
 	// Create 5 entries for each reference wheel
 	for (let i = 0; i < 5; i++) {
 		const entry = document.createElement("div");
@@ -587,17 +614,17 @@ referenceWheels.forEach(wheel => {
 		entry.style.alignItems = "center";
 		entry.style.fontSize = "2.5rem";
 		entry.style.transform = `translate(-50%, ${referenceEntryOffset + i * stepRem}rem)`; // Use referenceEntryOffset
-		
+
 		const fontName = container.dataset.font;
 		if (fontName) {
 			entry.style.fontFamily = fontName;
 		}
-		
+
 		// Calculate which letter to show: -2, -1, 0 (center = wheelLetter), +1, +2
 		const offset = i - 2;
 		const letterIndex = (wheelLetterIndex + offset + totalLetters) % totalLetters;
 		entry.textContent = letters[letterIndex];
-		
+
 		container.appendChild(entry);
 		wheel.entries.push(entry);
 	}
@@ -657,6 +684,7 @@ function updatePositions(offset, isSnapping = false) {
 }
 
 parent.addEventListener("pointerdown", e => {
+	e.preventDefault();
 	isDragging = true;
 	startY = e.clientY;
 	entries.forEach(el => el.style.transition = "none");
@@ -665,7 +693,9 @@ parent.addEventListener("pointerdown", e => {
 
 parent.addEventListener("pointermove", e => {
 	if (!isDragging) return;
-	dragOffsetRem += (e.clientY - startY) / 16;
+	e.preventDefault();
+	const remSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+	dragOffsetRem += (e.clientY - startY) / remSize;
 	startY = e.clientY;
 	updatePositions(dragOffsetRem);
 });
@@ -760,31 +790,79 @@ const voteData = { lat: 42, nor: 18, pho: 27, gre: 13 };
 let hasVoted = false;
 
 function castVote(id) {
-    if (hasVoted) return;
-    hasVoted = true;
-    voteData[id]++;
+	if (hasVoted) return;
+	hasVoted = true;
+	voteData[id]++;
 
-    const total = Object.values(voteData).reduce((s, v) => s + v, 0);
+	const total = Object.values(voteData).reduce((s, v) => s + v, 0);
 
-    document.querySelectorAll(".vote-bar").forEach(bar => {
-        const barId = bar.dataset.id;
-        const pct = Math.round((voteData[barId] / total) * 100);
-        bar.querySelector(".vote-fill").style.width = pct + "%";
-        bar.querySelector(".vote-pct").textContent = pct + "%";
-        if (barId !== id) bar.style.opacity = "0.5";
-        bar.style.cursor = "default";
-    });
+	document.querySelectorAll(".vote-bar").forEach(bar => {
+		const barId = bar.dataset.id;
+		const pct = Math.round((voteData[barId] / total) * 100);
+		bar.querySelector(".vote-fill").style.width = pct + "%";
+		bar.querySelector(".vote-pct").textContent = pct + "%";
+		if (barId !== id) bar.style.opacity = "0.5";
+		bar.style.cursor = "default";
+	});
 
-    document.getElementById("vote-weiter").classList.add("visible");
+	document.getElementById("vote-weiter").classList.add("visible");
 }
 
 function resetVote() {
-    hasVoted = false;
-    document.querySelectorAll(".vote-bar").forEach(bar => {
-        bar.querySelector(".vote-fill").style.width = "0%";
-        bar.querySelector(".vote-pct").textContent = "";
-        bar.style.opacity = "";
-        bar.style.cursor = "";
-    });
-    document.getElementById("vote-weiter").classList.remove("visible");
+	hasVoted = false;
+	document.querySelectorAll(".vote-bar").forEach(bar => {
+		bar.querySelector(".vote-fill").style.width = "0%";
+		bar.querySelector(".vote-pct").textContent = "";
+		bar.style.opacity = "";
+		bar.style.cursor = "";
+	});
+	document.getElementById("vote-weiter").classList.remove("visible");
 }
+
+
+//Tile Animation
+(function () {
+    const COOLDOWN_MS = 2000;
+    const FLARE_DURATION_MS = 1800;
+    let running = false;  // guard against double-start
+
+    function fireRandomFlare() {
+        const page = document.getElementById('futhark');
+        if (!page || !page.classList.contains('active')) {
+            running = false;
+            return;
+        }
+
+        const tiles = Array.from(
+            document.querySelectorAll(
+                '#futhark .futhark-overview-grid-tile-wrapper:not(:has(.futhark-overview-grid-tile-disabled))'
+            )
+        );
+        if (!tiles.length) return;
+
+        const tile = tiles[Math.floor(Math.random() * tiles.length)];
+        tile.classList.add('flare-active');
+
+        setTimeout(() => {
+            tile.classList.remove('flare-active');
+        }, FLARE_DURATION_MS);
+
+        setTimeout(fireRandomFlare, FLARE_DURATION_MS + COOLDOWN_MS);
+    }
+
+    function startOnce() {
+        if (running) return;
+        running = true;
+        setTimeout(fireRandomFlare, 2500);
+    }
+
+    const page = document.getElementById('futhark');
+    setInterval(() => {
+        const isActive = page && page.classList.contains('active');
+        if (isActive) {
+            startOnce();
+        } else {
+            running = false;
+        }
+    }, 500);
+})();
