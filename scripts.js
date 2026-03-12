@@ -170,16 +170,24 @@ function switchPage(targetId, addToBack) {
 				next.style.transform = "translateY(0)";
 
 				// restore normal state after fade-in
-				const onEnd = () => {
+				let onEndFired = false;
+				const finishTransition = () => {
+					if (onEndFired) return;
+					onEndFired = true;
 					next.style.transform = "";
 					next.style.opacity = "";
 					next.style.transition = "";
 					next.style.pointerEvents = "";
-
 					isSwitchingPage = false;
 					next.removeEventListener("transitionend", onEnd);
 				};
+				const onEnd = (e) => {
+					if (e.propertyName !== "opacity") return;
+					finishTransition();
+				};
 				next.addEventListener("transitionend", onEnd);
+				// Fallback: guarantee unlock even if transitionend never fires
+				setTimeout(finishTransition, 600);
 			});
 		});
 	}, 600); // 0.4 fade-out + 0.2 pause
@@ -258,8 +266,15 @@ function buildQuiz(levelIndex) {
 	const word = level.word;
 	const topContainer = document.getElementById(level.topId);
 	const bottomContainer = document.getElementById(level.bottomId);
-	const nextBtn = document.getElementById(level.nextBtnId);
-	const checkBtn = document.getElementById(level.checkBtnId);
+
+	// Clone buttons immediately to strip any previously attached listeners
+	const _checkBtn = document.getElementById(level.checkBtnId);
+	const checkBtn = _checkBtn.cloneNode(true);
+	_checkBtn.parentNode.replaceChild(checkBtn, _checkBtn);
+
+	const _nextBtn = document.getElementById(level.nextBtnId);
+	const nextBtn = _nextBtn.cloneNode(true);
+	_nextBtn.parentNode.replaceChild(nextBtn, _nextBtn);
 
 	topContainer.innerHTML = "";
 	bottomContainer.innerHTML = "";
@@ -285,6 +300,16 @@ function buildQuiz(levelIndex) {
 		div.dataset.property = letter;
 		div.dataset.slotIndex = i;
 		div.textContent = "";
+
+		// Hint ghost letter
+		const hint = document.createElement("span");
+		hint.classList.add("quiz-slot-hint");
+		hint.textContent = letter;
+		div.appendChild(hint);
+
+		const typed = document.createElement("span");
+		typed.classList.add("quiz-slot-typed");
+		div.appendChild(typed);
 
 		const bar = document.createElement("div");
 		bar.classList.add("quiz-slot-bar");
@@ -350,7 +375,7 @@ function buildQuiz(levelIndex) {
 
 	function checkAnswer() {
 		locked = true;
-		const filled = topElements.map(el => el.textContent);
+		const filled = topElements.map(el => el.querySelector(".quiz-slot-typed").textContent);
 		const allCorrect = filled.every((letter, i) => letter === word[i]);
 
 		if (allCorrect) {
@@ -360,7 +385,7 @@ function buildQuiz(levelIndex) {
 		} else {
 			const wrongEls = [];
 			topElements.forEach((el, i) => {
-				if (el.textContent === word[i]) {
+				if (el.querySelector(".quiz-slot-typed").textContent === word[i]) {
 					el.classList.add("correct-glow");
 				} else {
 					el.classList.add("wrong-glow");
@@ -376,11 +401,12 @@ function buildQuiz(levelIndex) {
 
 				setTimeout(() => {
 					wrongEls.forEach(el => {
+						// Kill transition first so clearing opacity doesn't animate
 						el.style.transition = "none";
-						el.style.opacity = "0";
-						el.style.visibility = "hidden";
+						el.style.opacity = "";
 						el.classList.remove("wrong-glow");
-						el.textContent = "";
+						el.querySelector(".quiz-slot-typed").textContent = "";
+						el.classList.remove("quiz-slot-filled");
 
 						const i = parseInt(el.dataset.slotIndex);
 						if (slotSource[i] !== null) {
@@ -389,6 +415,9 @@ function buildQuiz(levelIndex) {
 							slotSource[i] = null;
 						}
 					});
+					// Force a reflow so the transition:none takes effect before we restore it
+					wrongEls[0] && wrongEls[0].offsetHeight;
+					wrongEls.forEach(el => { el.style.transition = ""; });
 
 					currentSlot = findFirstEmpty();
 					updateCursorLocal();
@@ -396,14 +425,6 @@ function buildQuiz(levelIndex) {
 					checkBtn.disabled = true;
 					bottomElements.forEach((bEl, bIdx) => {
 						if (!slotSource.includes(bIdx)) bEl.classList.remove("futhark-overview-grid-tile-disabled");
-					});
-
-					wrongEls.forEach(el => { el.style.opacity = ""; });
-					requestAnimationFrame(() => {
-						wrongEls.forEach(el => { el.style.visibility = ""; });
-						requestAnimationFrame(() => {
-							wrongEls.forEach(el => { el.style.transition = ""; });
-						});
 					});
 				}, 400);
 			}, 2600);
@@ -420,8 +441,8 @@ function buildQuiz(levelIndex) {
 				const bottomEl = bottomElements[slotSource[i]];
 				if (bottomEl) bottomEl.classList.remove("futhark-overview-grid-tile-disabled");
 				slotSource[i] = null;
-				el.textContent = "";
-				el.classList.remove("wrong-glow", "correct-glow");
+				el.querySelector(".quiz-slot-typed").textContent = "";
+				el.classList.remove("quiz-slot-filled", "wrong-glow", "correct-glow");
 				checkBtn.disabled = true;
 				bottomElements.forEach((bEl, bIdx) => {
 					if (!slotSource.includes(bIdx)) bEl.classList.remove("futhark-overview-grid-tile-disabled");
@@ -446,7 +467,8 @@ function buildQuiz(levelIndex) {
 			div.classList.add("futhark-overview-grid-tile-disabled");
 
 			const topEl = topElements[currentSlot];
-			topEl.textContent = letter;
+			topEl.querySelector(".quiz-slot-typed").textContent = letter;
+			topEl.classList.add("quiz-slot-filled");
 			slotSource[currentSlot] = bottomIdx;
 
 			const totalSlots = topElements.length;
@@ -487,8 +509,8 @@ function buildQuiz(levelIndex) {
 		locked = true;
 		// Re-populate slotSource with best-effort matching from bottomElements
 		topElements.forEach((el, i) => {
-			el.textContent = word[i];
-			el.classList.add("correct-glow");
+			el.querySelector(".quiz-slot-typed").textContent = word[i];
+			el.classList.add("quiz-slot-filled", "correct-glow");
 		});
 		currentSlot = -1;
 		updateCursorLocal();
@@ -639,12 +661,17 @@ let basePositions = entries.map((_, i) => entryOffset + i * stepRem);
 let currentIndices = entries.map((_, i) => i);
 
 // Initialize entries
+const centerIndex = 3;
 entries.forEach((el, i) => {
 	el.style.position = "absolute";
 	el.style.left = "50%";
 	el.textContent = futharkLetters[currentIndices[i]];
 	el.style.transform = `translate(-50%, ${basePositions[i]}rem)`;
 	el.dataset.prevPos = basePositions[i];
+	if (i === centerIndex) {
+		selectedLetter = el.textContent;
+		selectedLetterElement = el;
+	}
 });
 
 let isDragging = false;
@@ -866,3 +893,15 @@ function resetVote() {
         }
     }, 500);
 })();
+
+// Counter-skew button text: wrap direct text nodes in a span
+document.querySelectorAll('.default-button, .origin-button').forEach(btn => {
+    btn.childNodes.forEach(node => {
+        if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+            const span = document.createElement('span');
+            span.className = 'button-text';
+            span.textContent = node.textContent;
+            btn.replaceChild(span, node);
+        }
+    });
+});

@@ -62,7 +62,19 @@
 
 @font-face {
     font-family: "pho";
-    src: url("fonts/PunischeFontfigma3-Regular.ttf");
+    src: url("fonts/PunischeFontFinal-Regular.ttf");
+}
+
+/* --- */
+
+@font-face {
+    font-family: "etr";
+    src: url("fonts/EtruskischeSchrift-Regular.ttf");
+}
+
+@font-face {
+    font-family: "pro";
+    src: url("fonts/Protosinaitisch-Regular.ttf");
 }
 
 /* High Level Stuff */
@@ -304,10 +316,9 @@ p {
     cursor: pointer;
     transform: skew(-15deg, 0deg);
     font-size: var(--button-font-size);
-    font-family: "Rethink", sans-serif;
-    /* font-family: "Freight", sans-serif; */
+    font-family: "Freight", sans-serif;
     color: var(--button-text-color);
-    text-shadow: 2px 2px 1px #110f0c88;
+    /* text-shadow: 2px 2px 1px #110f0c88; */
 
     clip-path: polygon(
         0% 0%,
@@ -332,6 +343,15 @@ p {
     );
 }
 
+/* Counter-skew button text so only the rect/shadow is skewed */
+.default-button .button-text,
+.origin-button .button-text,
+.default-button img,
+.origin-button img {
+    display: inline-block;
+    transform: skew(15deg, 0deg);
+}
+
 /* Check button disabled state */
 .default-button:disabled {
     opacity: 0.35;
@@ -348,17 +368,16 @@ p {
 
     margin-top: 0.0rem;
     margin-bottom: 0.0rem;
-    padding: 0.1rem 0.2rem;
+    padding: 0.2rem 0.4rem;
     border-radius: 0.2rem;
     background-color: var(--alt-button-color);
     border: none;
     cursor: pointer;
     transform: skew(-15deg, 0deg);
     font-size: 0.5rem;
-    font-family: "Rethink", sans-serif;
-    /* font-family: "Freight", sans-serif; */
+    font-family: "Freight", sans-serif;
     color: var(--button-text-color);
-    text-shadow: 2px 2px 1px #110f0c77;
+    /* text-shadow: 2px 2px 1px #110f0c77; */
 
     clip-path: polygon(
         0% 0%,
@@ -630,6 +649,11 @@ p {
     text-align: center;
 }
 
+.rune-origin-lang-sub2 {
+    font-size: 0.4rem;
+    text-align: center;
+}
+
 .rune-origin-absolut {
     position: absolute;
 }
@@ -667,6 +691,30 @@ p {
     border: 2px solid transparent;
     transition: box-shadow 0.35s ease, border-color 0.35s ease, color 0.35s ease;
     color: var(--alt-button-color);
+    position: relative;
+}
+
+.quiz-slot-hint {
+    position: absolute;
+    font-family: 'Rethink Sans', sans-serif;
+    font-size: 1.8rem;
+    color: var(--alt-button-color);
+    opacity: 0.18;
+    pointer-events: none;
+    user-select: none;
+    transition: opacity 0.2s ease;
+    text-transform: uppercase;
+}
+
+.quiz-slot-typed {
+    position: absolute;
+    font-size: 2.4rem;
+    margin-top: 0.2rem;
+    pointer-events: none;
+}
+
+.quiz-slot-filled .quiz-slot-hint {
+    opacity: 0;
 }
 
 .correct-glow {
@@ -708,7 +756,7 @@ p {
 .wheel-container {
     margin-top: 0.5rem;
     width: 85%;
-    height: 16rem;
+    height: 13rem;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -746,15 +794,15 @@ p {
     
     -webkit-mask-image: linear-gradient(to bottom,
             transparent 0%,
-            transparent 15%,
+            transparent 25%,
             black 50%,
-            transparent 85%,
+            transparent 75%,
             transparent 100%);
     mask-image: linear-gradient(to bottom,
             transparent 0%,
-            transparent 15%,
+            transparent 25%,
             black 50%,
-            transparent 85%,
+            transparent 75%,
             transparent 100%);
 }
 
@@ -773,22 +821,22 @@ p {
     overflow: hidden;
     background: linear-gradient(to bottom,
             transparent 0%,
-            transparent 10%,
+            transparent 20%,
             var(--button-color) 50%,
-            transparent 90%,
+            transparent 80%,
             transparent 100%);
 
     -webkit-mask-image: linear-gradient(to bottom,
             transparent 0%,
-            transparent 10%,
+            transparent 20%,
             black 50%,
-            transparent 90%,
+            transparent 80%,
             transparent 100%);
     mask-image: linear-gradient(to bottom,
             transparent 0%,
-            transparent 10%,
+            transparent 20%,
             black 50%,
-            transparent 90%,
+            transparent 80%,
             transparent 100%);
 }
 
@@ -839,7 +887,7 @@ p {
     position: relative;
     width: 100%;
     height: 2.6rem;
-    border-radius: 3px;
+    border-radius: 6px;
     cursor: pointer;
     overflow: hidden;
     background: linear-gradient(to right, rgba(144, 121, 163, 0.7) 0%, rgba(144, 121, 163, 0) 100%);
