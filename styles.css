@@ -33,36 +33,43 @@
 @font-face {
     font-family: "Freight";
     src: url("fonts/FreightMacro-Medium.ttf") format("truetype");
+    font-display: swap;
 }
 
 @font-face {
     font-family: "Rethink";
     src: url("fonts/RethinkSans-VariableFont_wght.ttf") format("truetype");
+    font-display: swap;
 }
 
 @font-face {
     font-family: "Futhark";
     src: url("fonts/runischeFontFinal-Regular.ttf");
+    font-display: block;
 }
 
 @font-face {
     font-family: "gre";
     src: url("fonts/GriechischeFontFinal-Regular.ttf");
+    font-display: block;
 }
 
 @font-face {
     font-family: "ven";
     src: url("fonts/VenetischeSchriftFinal-Regular.ttf");
+    font-display: block;
 }
 
 @font-face {
     font-family: "lat";
     src: url("fonts/LateinischeSchriftFinal-Regular.ttf");
+    font-display: block;
 }
 
 @font-face {
     font-family: "pho";
     src: url("fonts/PunischeFontFinal-Regular.ttf");
+    font-display: block;
 }
 
 /* --- */
@@ -70,11 +77,13 @@
 @font-face {
     font-family: "etr";
     src: url("fonts/EtruskischeSchrift-Regular.ttf");
+    font-display: block;
 }
 
 @font-face {
     font-family: "pro";
     src: url("fonts/Protosinaitisch-Regular.ttf");
+    font-display: block;
 }
 
 /* High Level Stuff */
