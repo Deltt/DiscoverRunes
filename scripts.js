@@ -180,6 +180,18 @@ function switchPage(targetId, addToBack) {
 					next.style.pointerEvents = "";
 					isSwitchingPage = false;
 					next.removeEventListener("transitionend", onEnd);
+
+					setTimeout(() => {
+						const buttons = next.querySelectorAll('.default-button, .origin-button');
+						buttons.forEach(btn => {
+							btn.classList.add('flare-active');
+
+							// Remove the class after animation completes so it can be re-triggered later
+							btn.addEventListener('animationend', () => {
+								btn.classList.remove('flare-active');
+							}, { once: true });
+						});
+					}, 500); // 0.5s delay
 				};
 				const onEnd = (e) => {
 					if (e.propertyName !== "opacity") return;
@@ -250,9 +262,9 @@ const possibleFillers = [
 
 // Quiz level definitions
 const quizLevels = [
-	{ word: ["k", "a", "m", "m"],       topId: "quiz-top",  bottomId: "quiz-bottom",  nextBtnId: "quiz1-next-btn", checkBtnId: "quiz1-check-btn" },
-	{ word: ["f", "i", "b", "e", "l"],  topId: "quiz2-top", bottomId: "quiz2-bottom", nextBtnId: "quiz2-next-btn", checkBtnId: "quiz2-check-btn" },
-	{ word: ["p", "f", "e", "i", "l"],  topId: "quiz3-top", bottomId: "quiz3-bottom", nextBtnId: "quiz3-next-btn", checkBtnId: "quiz3-check-btn" },
+	{ word: ["k", "a", "m", "m"], topId: "quiz-top", bottomId: "quiz-bottom", nextBtnId: "quiz1-next-btn", checkBtnId: "quiz1-check-btn" },
+	{ word: ["f", "i", "b", "e", "l"], topId: "quiz2-top", bottomId: "quiz2-bottom", nextBtnId: "quiz2-next-btn", checkBtnId: "quiz2-check-btn" },
+	{ word: ["p", "f", "e", "i", "l"], topId: "quiz3-top", bottomId: "quiz3-bottom", nextBtnId: "quiz3-next-btn", checkBtnId: "quiz3-check-btn" },
 ];
 
 // Solved state per level
@@ -813,13 +825,18 @@ function applyGlow(elements, {
 }
 
 // ── Voting Page
-const voteData = { lat: 42, nor: 18, pho: 27, gre: 13 };
+const voteData = JSON.parse(localStorage.getItem("voteData")) || { lat: 0, nor: 0, pho: 0, gre: 0 };
 let hasVoted = false;
 
 function castVote(id) {
 	if (hasVoted) return;
 	hasVoted = true;
 	voteData[id]++;
+
+	// Save votes and user state
+	localStorage.setItem("voteData", JSON.stringify(voteData));
+	localStorage.setItem("hasVoted", "true");
+	localStorage.setItem("votedFor", id);
 
 	const total = Object.values(voteData).reduce((s, v) => s + v, 0);
 
@@ -836,6 +853,7 @@ function castVote(id) {
 }
 
 function resetVote() {
+	// Only resets visuals and vote flag
 	hasVoted = false;
 	document.querySelectorAll(".vote-bar").forEach(bar => {
 		bar.querySelector(".vote-fill").style.width = "0%";
@@ -849,59 +867,59 @@ function resetVote() {
 
 //Tile Animation
 (function () {
-    const COOLDOWN_MS = 2000;
-    const FLARE_DURATION_MS = 1800;
-    let running = false;  // guard against double-start
+	const COOLDOWN_MS = 2000;
+	const FLARE_DURATION_MS = 1800;
+	let running = false;  // guard against double-start
 
-    function fireRandomFlare() {
-        const page = document.getElementById('futhark');
-        if (!page || !page.classList.contains('active')) {
-            running = false;
-            return;
-        }
+	function fireRandomFlare() {
+		const page = document.getElementById('futhark');
+		if (!page || !page.classList.contains('active')) {
+			running = false;
+			return;
+		}
 
-        const tiles = Array.from(
-            document.querySelectorAll(
-                '#futhark .futhark-overview-grid-tile-wrapper:not(:has(.futhark-overview-grid-tile-disabled))'
-            )
-        );
-        if (!tiles.length) return;
+		const tiles = Array.from(
+			document.querySelectorAll(
+				'#futhark .futhark-overview-grid-tile-wrapper:not(:has(.futhark-overview-grid-tile-disabled))'
+			)
+		);
+		if (!tiles.length) return;
 
-        const tile = tiles[Math.floor(Math.random() * tiles.length)];
-        tile.classList.add('flare-active');
+		const tile = tiles[Math.floor(Math.random() * tiles.length)];
+		tile.classList.add('flare-active');
 
-        setTimeout(() => {
-            tile.classList.remove('flare-active');
-        }, FLARE_DURATION_MS);
+		setTimeout(() => {
+			tile.classList.remove('flare-active');
+		}, FLARE_DURATION_MS);
 
-        setTimeout(fireRandomFlare, FLARE_DURATION_MS + COOLDOWN_MS);
-    }
+		setTimeout(fireRandomFlare, FLARE_DURATION_MS + COOLDOWN_MS);
+	}
 
-    function startOnce() {
-        if (running) return;
-        running = true;
-        setTimeout(fireRandomFlare, 2500);
-    }
+	function startOnce() {
+		if (running) return;
+		running = true;
+		setTimeout(fireRandomFlare, 2500);
+	}
 
-    const page = document.getElementById('futhark');
-    setInterval(() => {
-        const isActive = page && page.classList.contains('active');
-        if (isActive) {
-            startOnce();
-        } else {
-            running = false;
-        }
-    }, 500);
+	const page = document.getElementById('futhark');
+	setInterval(() => {
+		const isActive = page && page.classList.contains('active');
+		if (isActive) {
+			startOnce();
+		} else {
+			running = false;
+		}
+	}, 500);
 })();
 
 // Counter-skew button text: wrap direct text nodes in a span
 document.querySelectorAll('.default-button, .origin-button').forEach(btn => {
-    btn.childNodes.forEach(node => {
-        if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
-            const span = document.createElement('span');
-            span.className = 'button-text';
-            span.textContent = node.textContent;
-            btn.replaceChild(span, node);
-        }
-    });
+	btn.childNodes.forEach(node => {
+		if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+			const span = document.createElement('span');
+			span.className = 'button-text';
+			span.textContent = node.textContent;
+			btn.replaceChild(span, node);
+		}
+	});
 });
