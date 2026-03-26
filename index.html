@@ -572,30 +572,22 @@
 
         <div id="wheel" class="page">
             <div class="top-spacer"></div>
-
             <div class="center-container">
                 <div class="headline-container">
-                    <h1 class="headline">Vergleicht die Alphabete!</h1>
+                    <h1 class="headline">Vergleicht die Alphabete! <span style="font-size:0.8rem; opacity:0.7;">1/3</span></h1>
                 </div>
             </div>
-
-            <!-- <div class="center-container">
-                <p class="sub-headline">Vergleicht die Alphabete!</p>
-            </div> -->
-
             <div class="center-container">
                 <div class="text-container">
                     <p>Um herauszufinden, von welchem Alphabet die Runen abstammen, lassen sich die Schriftsysteme
                         miteinander vergleichen. Dabei zeigt sich: Manche Runen ähneln den Zeichen anderer Alphabete und
                         stehen sogar für denselben Laut. Andere wiederum sehen zwar gleich aus, bezeichnen jedoch einen
-                        anderen Laut. Probiert es selbst aus. <br><br> Probiert es selbst aus und löst dieses Rätsel:
-                        Alle
-                        Schriftzeichen einer Reihe stehen für denselben Laut. Könnt ihr die Rune finden, die diese Reihe
+                        anderen Laut. Probiert es selbst aus und löst dieses Rätsel:
+                        Alle Schriftzeichen einer Reihe stehen für denselben Laut. Könnt ihr die Rune finden, die diese Reihe
                         vervollständigt?
                     </p>
                 </div>
             </div>
-
             <div class="center-container">
                 <div class="wheel-label-row">
                     <span class="wheel-label">Punisch-Phönizisch</span>
@@ -607,7 +599,7 @@
                 <div class="wheel-container">
                     <div class="wheel-fixed" data-font="pho">f</div>
                     <div class="wheel-fixed" data-font="gre">f</div>
-                    <div id="wheel-main">
+                    <div id="wheel1-main" class="wheel-main-scroll">
                         <div class="wheel-main-entry">f</div>
                         <div class="wheel-main-entry">f</div>
                         <div class="wheel-main-entry">f</div>
@@ -620,11 +612,114 @@
                     <div class="wheel-fixed" data-font="lat">f</div>
                 </div>
             </div>
-
             <div class="center-container button-spacer"></div>
+            <div class="center-container-split-3" style="margin-top: 1rem;">
+                <div></div>
+                <div>
+                    <div class="button-wrapper"><button id="wheel1-check-button" class="default-button">Überprüfe!</button></div>
+                </div>
+                <div>
+                    <div class="button-wrapper"><button id="wheel1-next-btn" class="default-button default-button-right hidden" data-next="wheel2">Weiter zu Level 2 →</button></div>
+                </div>
+            </div>
+        </div>
 
+        <div id="wheel2" class="page">
+            <div class="top-spacer"></div>
             <div class="center-container">
-                <div class="button-wrapper"><button id="wheel-check-button" class="default-button">Überprüfe!</button>
+                <div class="headline-container">
+                    <h1 class="headline">Vergleicht die Alphabete! <span style="font-size:0.8rem; opacity:0.7;">2/3</span></h1>
+                </div>
+            </div>
+            <div class="center-container">
+                <div class="text-container">
+                    <p>Gut gemacht! Weiter geht's. Findet die passende Rune für den nächsten Laut!</p>
+                </div>
+            </div>
+            <div class="center-container">
+                <div class="wheel-label-row">
+                    <span class="wheel-label">Punisch-Phönizisch</span>
+                    <span class="wheel-label">Griechisch</span>
+                    <span class="wheel-label">Futhark</span>
+                    <span class="wheel-label">Norditalisch</span>
+                    <span class="wheel-label">Lateinisch</span>
+                </div>
+                <div class="wheel-container">
+                    <div class="wheel-fixed" data-font="pho">f</div>
+                    <div class="wheel-fixed" data-font="gre">f</div>
+                    <div id="wheel2-main" class="wheel-main-scroll">
+                        <div class="wheel-main-entry">f</div>
+                        <div class="wheel-main-entry">f</div>
+                        <div class="wheel-main-entry">f</div>
+                        <div class="wheel-main-entry">f</div>
+                        <div class="wheel-main-entry">f</div>
+                        <div class="wheel-main-entry">f</div>
+                        <div class="wheel-main-entry">f</div>
+                    </div>
+                    <div class="wheel-fixed" data-font="ven">f</div>
+                    <div class="wheel-fixed" data-font="lat">f</div>
+                </div>
+            </div>
+            <div class="center-container button-spacer"></div>
+            <div class="center-container-split-3" style="margin-top: 1rem;">
+                <div>
+                    <div class="button-wrapper"><button class="default-button default-button-left interaction-change-page" data-next="wheel">← Zurück</button></div>
+                </div>
+                <div>
+                    <div class="button-wrapper"><button id="wheel2-check-button" class="default-button">Überprüfe!</button></div>
+                </div>
+                <div>
+                    <div class="button-wrapper"><button id="wheel2-next-btn" class="default-button default-button-right hidden" data-next="wheel3">Weiter zu Level 3 →</button></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="wheel3" class="page">
+            <div class="top-spacer"></div>
+            <div class="center-container">
+                <div class="headline-container">
+                    <h1 class="headline">Vergleicht die Alphabete! <span style="font-size:0.8rem; opacity:0.7;">3/3</span></h1>
+                </div>
+            </div>
+            <div class="center-container">
+                <div class="text-container">
+                    <p>Letzter Laut! Schafft ihr es?</p>
+                </div>
+            </div>
+            <div class="center-container">
+                <div class="wheel-label-row">
+                    <span class="wheel-label">Punisch-Phönizisch</span>
+                    <span class="wheel-label">Griechisch</span>
+                    <span class="wheel-label">Futhark</span>
+                    <span class="wheel-label">Norditalisch</span>
+                    <span class="wheel-label">Lateinisch</span>
+                </div>
+                <div class="wheel-container">
+                    <div class="wheel-fixed" data-font="pho">f</div>
+                    <div class="wheel-fixed" data-font="gre">f</div>
+                    <div id="wheel3-main" class="wheel-main-scroll">
+                        <div class="wheel-main-entry">f</div>
+                        <div class="wheel-main-entry">f</div>
+                        <div class="wheel-main-entry">f</div>
+                        <div class="wheel-main-entry">f</div>
+                        <div class="wheel-main-entry">f</div>
+                        <div class="wheel-main-entry">f</div>
+                        <div class="wheel-main-entry">f</div>
+                    </div>
+                    <div class="wheel-fixed" data-font="ven">f</div>
+                    <div class="wheel-fixed" data-font="lat">f</div>
+                </div>
+            </div>
+            <div class="center-container button-spacer"></div>
+            <div class="center-container-split-3" style="margin-top: 1rem;">
+                <div>
+                    <div class="button-wrapper"><button class="default-button default-button-left interaction-change-page" data-next="wheel2">← Zurück</button></div>
+                </div>
+                <div>
+                    <div class="button-wrapper"><button id="wheel3-check-button" class="default-button">Überprüfe!</button></div>
+                </div>
+                <div>
+                    <div class="button-wrapper"><button id="wheel3-next-btn" class="default-button default-button-right hidden" data-next="origin">Zu den Thesen →</button></div>
                 </div>
             </div>
         </div>

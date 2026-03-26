@@ -826,7 +826,7 @@ p {
     pointer-events: none;
 }
 
-#wheel-main {
+#wheel-main, #wheel1-main, #wheel2-main, #wheel3-main {
     touch-action: none;
     height: 20rem;
     width: 3rem;
@@ -1098,53 +1098,4 @@ p {
     );
     animation: ember-flare-glint 2.8s ease-in-out forwards;
     pointer-events: none;
-}
-
-
-
-.default-button.flare-active::before,
-.origin-button.flare-active::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        120deg,
-        transparent 30%,
-        rgba(255, 255, 255, 0.4) 50%,
-        transparent 70%
-    );
-    /* We match the skew here but handle the movement via translateX */
-    transform: translateX(-160%) skewX(-20deg);
-    animation: ember-flare-glint 1.2s ease-in-out forwards;
-    pointer-events: none;
-    z-index: 1;
-}
-
-/* Animation for default and origin buttons */
-.default-button.flare-active::before,
-.origin-button.flare-active::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        120deg,
-        transparent,
-        rgba(255, 255, 255, 0.4),
-        transparent
-    );
-    transform: translateX(-160%) skewX(-20deg);
-    animation: ember-flare-glint 1.2s ease-in-out forwards;
-    pointer-events: none;
-}
-
-/* Ensure buttons have relative positioning for the pseudo-element */
-.default-button, .origin-button {
-    position: relative;
-    overflow: hidden;
 }

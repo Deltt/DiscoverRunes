@@ -109,6 +109,11 @@ document.getElementById("back-button").addEventListener("click", () => {
 		return;
 	}
 
+	if (currentActive && (currentActive.id === "wheel" || currentActive.id === "wheel2" || currentActive.id === "wheel3")) {
+		_origSwitchPage("origin", false);
+		return;
+	}
+
 	if (backArray.length > 0) {
 		switchPage(backArray[backArray.length - 1], false);
 		backArray.pop();
@@ -180,18 +185,6 @@ function switchPage(targetId, addToBack) {
 					next.style.pointerEvents = "";
 					isSwitchingPage = false;
 					next.removeEventListener("transitionend", onEnd);
-
-					setTimeout(() => {
-						const buttons = next.querySelectorAll('.default-button, .origin-button');
-						buttons.forEach(btn => {
-							btn.classList.add('flare-active');
-
-							// Remove the class after animation completes so it can be re-triggered later
-							btn.addEventListener('animationend', () => {
-								btn.classList.remove('flare-active');
-							}, { once: true });
-						});
-					}, 500); // 0.5s delay
 				};
 				const onEnd = (e) => {
 					if (e.propertyName !== "opacity") return;
@@ -262,9 +255,9 @@ const possibleFillers = [
 
 // Quiz level definitions
 const quizLevels = [
-	{ word: ["k", "a", "m", "m"], topId: "quiz-top", bottomId: "quiz-bottom", nextBtnId: "quiz1-next-btn", checkBtnId: "quiz1-check-btn" },
-	{ word: ["f", "i", "b", "e", "l"], topId: "quiz2-top", bottomId: "quiz2-bottom", nextBtnId: "quiz2-next-btn", checkBtnId: "quiz2-check-btn" },
-	{ word: ["p", "f", "e", "i", "l"], topId: "quiz3-top", bottomId: "quiz3-bottom", nextBtnId: "quiz3-next-btn", checkBtnId: "quiz3-check-btn" },
+	{ word: ["k", "a", "m", "m"],       topId: "quiz-top",  bottomId: "quiz-bottom",  nextBtnId: "quiz1-next-btn", checkBtnId: "quiz1-check-btn" },
+	{ word: ["f", "i", "b", "e", "l"],  topId: "quiz2-top", bottomId: "quiz2-bottom", nextBtnId: "quiz2-next-btn", checkBtnId: "quiz2-check-btn" },
+	{ word: ["p", "f", "e", "i", "l"],  topId: "quiz3-top", bottomId: "quiz3-bottom", nextBtnId: "quiz3-next-btn", checkBtnId: "quiz3-check-btn" },
 ];
 
 // Solved state per level
@@ -563,17 +556,21 @@ function resetAllQuizLevels() {
 	});
 }
 
-// Patch switchPage to handle quiz page transitions
+// Patch switchPage to handle quiz and wheel page transitions
 const _origSwitchPage = switchPage;
 const quizPageIds = new Set(["quiz", "quiz2", "quiz3"]);
 const levelMap = { "quiz": 0, "quiz2": 1, "quiz3": 2 };
+const wheelPageIds = new Set(["wheel", "wheel2", "wheel3"]);
 
 switchPage = function (targetId, addToBack) {
 	const currentActive = document.querySelector(".page.active");
 	const leavingQuiz = currentActive && quizPageIds.has(currentActive.id);
 	const enteringQuiz = quizPageIds.has(targetId);
+	const leavingWheel = currentActive && wheelPageIds.has(currentActive.id);
+	const enteringWheel = wheelPageIds.has(targetId);
 
 	if (leavingQuiz || enteringQuiz) addToBack = false;
+	if (leavingWheel && enteringWheel) addToBack = false;
 
 	if (enteringQuiz) {
 		const targetLevel = levelMap[targetId];
@@ -585,190 +582,416 @@ switchPage = function (targetId, addToBack) {
 	_origSwitchPage(targetId, addToBack);
 };
 
-// Wheel
-const wheelLetter = "r";
-let selectedLetter = "a";
-let selectedLetterElement;
-const wheelCheckButton = document.getElementById("wheel-check-button");
-let freezeWheel = false;
+// ── Wheel Level 1 (letter: m) ─────────────────────────────────────────────
+(function () {
+	const wheelLetter = "m";
+	let selectedLetter = "a";
+	let selectedLetterElement;
+	const wheelCheckButton = document.getElementById("wheel1-check-button");
+	const wheelNextButton  = document.getElementById("wheel1-next-btn");
+	let freezeWheel = false;
 
-wheelCheckButton && wheelCheckButton.addEventListener("click", () => {
-	if (selectedLetter == wheelLetter) {
-		freezeWheel = true;
-		selectedLetterElement.style.transition = "";
-		applyGlow(selectedLetterElement, {
-			className: "correct-glow"
-		});
+	function showNextBtn() {
+		wheelNextButton.style.opacity = "0";
+		wheelNextButton.classList.remove("hidden");
+		requestAnimationFrame(() => requestAnimationFrame(() => {
+			wheelNextButton.style.transition = "opacity 0.6s ease";
+			wheelNextButton.style.opacity = "1";
+		}));
 	}
-	else {
-		selectedLetterElement.style.transition = "";
-		applyGlow(selectedLetterElement, {
-			className: "wrong-glow",
-			duration: 3000
-		});
-	}
-});
 
-// Initialize reference wheels with arrays
-const referenceWheels = [
-	{ element: document.querySelectorAll(".wheel-fixed")[0], letters: phoLetters, entries: [] },
-	{ element: document.querySelectorAll(".wheel-fixed")[1], letters: greLetters, entries: [] },
-	{ element: document.querySelectorAll(".wheel-fixed")[2], letters: itaLetters, entries: [] },
-	{ element: document.querySelectorAll(".wheel-fixed")[3], letters: venLetters, entries: [] }
-];
-
-const stepRem = 4;
-const entryOffset = -3.35; // For main wheel
-const referenceEntryOffset = -1.0; // For reference wheels - adjust this value
-
-// Initialize reference wheels - FIXED to wheelLetter
-referenceWheels.forEach(wheel => {
-	const container = wheel.element;
-	container.innerHTML = ""; // Clear existing content
-	container.style.position = "relative";
-	container.style.overflow = "hidden";
-
-	const letters = wheel.letters;
-	const totalLetters = letters.length;
-	const wheelLetterIndex = letters.indexOf(wheelLetter);
-
-	if (wheelLetterIndex === -1) return;
-
-	// Create 5 entries for each reference wheel
-	for (let i = 0; i < 5; i++) {
-		const entry = document.createElement("div");
-		entry.className = "wheel-fixed-entry";
-		entry.style.position = "absolute";
-		entry.style.left = "50%";
-		entry.style.width = "100%";
-		entry.style.height = "2.5rem";
-		entry.style.paddingTop = "0.5rem";
-		entry.style.display = "flex";
-		entry.style.justifyContent = "center";
-		entry.style.alignItems = "center";
-		entry.style.fontSize = "2.5rem";
-		entry.style.transform = `translate(-50%, ${referenceEntryOffset + i * stepRem}rem)`; // Use referenceEntryOffset
-
-		const fontName = container.dataset.font;
-		if (fontName) {
-			entry.style.fontFamily = fontName;
-		}
-
-		// Calculate which letter to show: -2, -1, 0 (center = wheelLetter), +1, +2
-		const offset = i - 2;
-		const letterIndex = (wheelLetterIndex + offset + totalLetters) % totalLetters;
-		entry.textContent = letters[letterIndex];
-
-		container.appendChild(entry);
-		wheel.entries.push(entry);
-	}
-});
-
-// Main wheel setup
-const parent = document.getElementById("wheel-main");
-const entries = Array.from(document.querySelectorAll(".wheel-main-entry"));
-const totalHeight = entries.length * stepRem;
-
-let basePositions = entries.map((_, i) => entryOffset + i * stepRem);
-let currentIndices = entries.map((_, i) => i);
-
-// Initialize entries
-const centerIndex = 3;
-entries.forEach((el, i) => {
-	el.style.position = "absolute";
-	el.style.left = "50%";
-	el.textContent = futharkLetters[currentIndices[i]];
-	el.style.transform = `translate(-50%, ${basePositions[i]}rem)`;
-	el.dataset.prevPos = basePositions[i];
-	if (i === centerIndex) {
-		selectedLetter = el.textContent;
-		selectedLetterElement = el;
-	}
-});
-
-let isDragging = false;
-let startY = 0;
-let dragOffsetRem = 0;
-
-const getLoopedPos = (pos) => ((pos - entryOffset) % totalHeight + totalHeight) % totalHeight + entryOffset;
-
-function updatePositions(offset, isSnapping = false) {
-	if (freezeWheel) return;
-	const centerSlotPos = entryOffset + (3 * stepRem);
-
-	entries.forEach((el, i) => {
-		const rawPos = basePositions[i] + offset;
-		const loopedPos = getLoopedPos(rawPos);
-
-		const prev = parseFloat(el.dataset.prevPos);
-		const diff = loopedPos - prev;
-
-		// Wrap Detection
-		if (diff < -totalHeight / 2) {
-			currentIndices[i] = (currentIndices[i] + entries.length) % futharkLetters.length;
-			el.textContent = futharkLetters[currentIndices[i]];
-		} else if (diff > totalHeight / 2) {
-			currentIndices[i] = (currentIndices[i] - entries.length + futharkLetters.length) % futharkLetters.length;
-			el.textContent = futharkLetters[currentIndices[i]];
-		}
-
-		el.style.transform = `translate(-50%, ${loopedPos}rem)`;
-		el.dataset.prevPos = loopedPos;
-
-		if (isSnapping && Math.abs(loopedPos - centerSlotPos) < 0.1) {
-			selectedLetter = el.textContent;
-			selectedLetterElement = el;
-		}
-	});
-}
-
-parent.addEventListener("pointerdown", e => {
-	e.preventDefault();
-	isDragging = true;
-	startY = e.clientY;
-	entries.forEach(el => el.style.transition = "none");
-	parent.setPointerCapture(e.pointerId);
-});
-
-parent.addEventListener("pointermove", e => {
-	if (!isDragging) return;
-	e.preventDefault();
-	const remSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
-	dragOffsetRem += (e.clientY - startY) / remSize;
-	startY = e.clientY;
-	updatePositions(dragOffsetRem);
-});
-
-function snap() {
-	if (!isDragging) return;
-	isDragging = false;
-
-	const snappedDragOffset = Math.round(dragOffsetRem / stepRem) * stepRem;
-
-	entries.forEach((el, i) => {
-		const rawPos = basePositions[i] + snappedDragOffset;
-		const loopedPos = getLoopedPos(rawPos);
-		const currentTransformY = parseFloat(el.style.transform.split(',')[1]) || 0;
-		const distance = Math.abs(loopedPos - currentTransformY);
-
-		if (distance > totalHeight / 2) {
-			el.style.transition = "none";
+	wheelCheckButton && wheelCheckButton.addEventListener("click", () => {
+		if (selectedLetter == wheelLetter) {
+			freezeWheel = true;
+			selectedLetterElement.style.transition = "";
+			applyGlow(selectedLetterElement, { className: "correct-glow" });
+			setTimeout(showNextBtn, 400);
 		} else {
-			el.style.transition = "transform 0.2s cubic-bezier(.2, .7, .3, 1)";
+			selectedLetterElement.style.transition = "";
+			applyGlow(selectedLetterElement, { className: "wrong-glow", duration: 3000 });
 		}
 	});
 
-	updatePositions(snappedDragOffset, true);
+	wheelNextButton && wheelNextButton.addEventListener("click", () => {
+		switchPage(wheelNextButton.dataset.next, true);
+	});
 
-	basePositions = basePositions.map(pos => getLoopedPos(pos + snappedDragOffset));
-	dragOffsetRem = 0;
+	const pageEl = document.getElementById("wheel");
+	const referenceWheels = [
+		{ element: pageEl.querySelectorAll(".wheel-fixed")[0], letters: phoLetters, entries: [] },
+		{ element: pageEl.querySelectorAll(".wheel-fixed")[1], letters: greLetters, entries: [] },
+		{ element: pageEl.querySelectorAll(".wheel-fixed")[2], letters: itaLetters, entries: [] },
+		{ element: pageEl.querySelectorAll(".wheel-fixed")[3], letters: venLetters, entries: [] }
+	];
 
-	console.log("Selected:", selectedLetter);
-}
+	const stepRem = 4;
+	const entryOffset = -3.35;
+	const referenceEntryOffset = -1.0;
 
-parent.addEventListener("pointerup", snap);
-parent.addEventListener("pointercancel", snap);
-parent.addEventListener("pointerleave", snap);
+	referenceWheels.forEach(wheel => {
+		const container = wheel.element;
+		container.innerHTML = "";
+		container.style.position = "relative";
+		container.style.overflow = "hidden";
+		const letters = wheel.letters;
+		const totalLetters = letters.length;
+		const wheelLetterIndex = letters.indexOf(wheelLetter);
+		if (wheelLetterIndex === -1) return;
+		for (let i = 0; i < 5; i++) {
+			const entry = document.createElement("div");
+			entry.className = "wheel-fixed-entry";
+			entry.style.position = "absolute";
+			entry.style.left = "50%";
+			entry.style.width = "100%";
+			entry.style.height = "2.5rem";
+			entry.style.paddingTop = "0.5rem";
+			entry.style.display = "flex";
+			entry.style.justifyContent = "center";
+			entry.style.alignItems = "center";
+			entry.style.fontSize = "2.5rem";
+			entry.style.transform = `translate(-50%, ${referenceEntryOffset + i * stepRem}rem)`;
+			const fontName = container.dataset.font;
+			if (fontName) entry.style.fontFamily = fontName;
+			const offset = i - 2;
+			const letterIndex = (wheelLetterIndex + offset + totalLetters) % totalLetters;
+			entry.textContent = letters[letterIndex];
+			container.appendChild(entry);
+			wheel.entries.push(entry);
+		}
+	});
+
+	const parent = document.getElementById("wheel1-main");
+	const entries = Array.from(parent.querySelectorAll(".wheel-main-entry"));
+	const totalHeight = entries.length * stepRem;
+	let basePositions = entries.map((_, i) => entryOffset + i * stepRem);
+	let currentIndices = entries.map((_, i) => i);
+	const centerIndex = 3;
+	entries.forEach((el, i) => {
+		el.style.position = "absolute";
+		el.style.left = "50%";
+		el.textContent = futharkLetters[currentIndices[i]];
+		el.style.transform = `translate(-50%, ${basePositions[i]}rem)`;
+		el.dataset.prevPos = basePositions[i];
+		if (i === centerIndex) { selectedLetter = el.textContent; selectedLetterElement = el; }
+	});
+
+	let isDragging = false;
+	let startY = 0;
+	let dragOffsetRem = 0;
+	const getLoopedPos = (pos) => ((pos - entryOffset) % totalHeight + totalHeight) % totalHeight + entryOffset;
+
+	function updatePositions(offset, isSnapping = false) {
+		if (freezeWheel) return;
+		const centerSlotPos = entryOffset + (3 * stepRem);
+		entries.forEach((el, i) => {
+			const rawPos = basePositions[i] + offset;
+			const loopedPos = getLoopedPos(rawPos);
+			const prev = parseFloat(el.dataset.prevPos);
+			const diff = loopedPos - prev;
+			if (diff < -totalHeight / 2) { currentIndices[i] = (currentIndices[i] + entries.length) % futharkLetters.length; el.textContent = futharkLetters[currentIndices[i]]; }
+			else if (diff > totalHeight / 2) { currentIndices[i] = (currentIndices[i] - entries.length + futharkLetters.length) % futharkLetters.length; el.textContent = futharkLetters[currentIndices[i]]; }
+			el.style.transform = `translate(-50%, ${loopedPos}rem)`;
+			el.dataset.prevPos = loopedPos;
+			if (isSnapping && Math.abs(loopedPos - centerSlotPos) < 0.1) { selectedLetter = el.textContent; selectedLetterElement = el; }
+		});
+	}
+
+	parent.addEventListener("pointerdown", e => { e.preventDefault(); isDragging = true; startY = e.clientY; entries.forEach(el => el.style.transition = "none"); parent.setPointerCapture(e.pointerId); });
+	parent.addEventListener("pointermove", e => { if (!isDragging) return; e.preventDefault(); const remSize = parseFloat(getComputedStyle(document.documentElement).fontSize); dragOffsetRem += (e.clientY - startY) / remSize; startY = e.clientY; updatePositions(dragOffsetRem); });
+
+	function snap() {
+		if (!isDragging) return;
+		isDragging = false;
+		const snappedDragOffset = Math.round(dragOffsetRem / stepRem) * stepRem;
+		entries.forEach((el, i) => {
+			const rawPos = basePositions[i] + snappedDragOffset;
+			const loopedPos = getLoopedPos(rawPos);
+			const currentTransformY = parseFloat(el.style.transform.split(',')[1]) || 0;
+			const distance = Math.abs(loopedPos - currentTransformY);
+			el.style.transition = distance > totalHeight / 2 ? "none" : "transform 0.2s cubic-bezier(.2, .7, .3, 1)";
+		});
+		updatePositions(snappedDragOffset, true);
+		basePositions = basePositions.map(pos => getLoopedPos(pos + snappedDragOffset));
+		dragOffsetRem = 0;
+	}
+	parent.addEventListener("pointerup", snap);
+	parent.addEventListener("pointercancel", snap);
+	parent.addEventListener("pointerleave", snap);
+})();
+
+// ── Wheel Level 2 (letter: k) ─────────────────────────────────────────────
+(function () {
+	const wheelLetter = "k";
+	let selectedLetter = "a";
+	let selectedLetterElement;
+	const wheelCheckButton = document.getElementById("wheel2-check-button");
+	const wheelNextButton  = document.getElementById("wheel2-next-btn");
+	let freezeWheel = false;
+
+	function showNextBtn() {
+		wheelNextButton.style.opacity = "0";
+		wheelNextButton.classList.remove("hidden");
+		requestAnimationFrame(() => requestAnimationFrame(() => {
+			wheelNextButton.style.transition = "opacity 0.6s ease";
+			wheelNextButton.style.opacity = "1";
+		}));
+	}
+
+	wheelCheckButton && wheelCheckButton.addEventListener("click", () => {
+		if (selectedLetter == wheelLetter) {
+			freezeWheel = true;
+			selectedLetterElement.style.transition = "";
+			applyGlow(selectedLetterElement, { className: "correct-glow" });
+			setTimeout(showNextBtn, 400);
+		} else {
+			selectedLetterElement.style.transition = "";
+			applyGlow(selectedLetterElement, { className: "wrong-glow", duration: 3000 });
+		}
+	});
+
+	wheelNextButton && wheelNextButton.addEventListener("click", () => {
+		switchPage(wheelNextButton.dataset.next, true);
+	});
+
+	const pageEl = document.getElementById("wheel2");
+	const referenceWheels = [
+		{ element: pageEl.querySelectorAll(".wheel-fixed")[0], letters: phoLetters, entries: [] },
+		{ element: pageEl.querySelectorAll(".wheel-fixed")[1], letters: greLetters, entries: [] },
+		{ element: pageEl.querySelectorAll(".wheel-fixed")[2], letters: itaLetters, entries: [] },
+		{ element: pageEl.querySelectorAll(".wheel-fixed")[3], letters: venLetters, entries: [] }
+	];
+
+	const stepRem = 4;
+	const entryOffset = -3.35;
+	const referenceEntryOffset = -1.0;
+
+	referenceWheels.forEach(wheel => {
+		const container = wheel.element;
+		container.innerHTML = "";
+		container.style.position = "relative";
+		container.style.overflow = "hidden";
+		const letters = wheel.letters;
+		const totalLetters = letters.length;
+		const wheelLetterIndex = letters.indexOf(wheelLetter);
+		if (wheelLetterIndex === -1) return;
+		for (let i = 0; i < 5; i++) {
+			const entry = document.createElement("div");
+			entry.className = "wheel-fixed-entry";
+			entry.style.position = "absolute";
+			entry.style.left = "50%";
+			entry.style.width = "100%";
+			entry.style.height = "2.5rem";
+			entry.style.paddingTop = "0.5rem";
+			entry.style.display = "flex";
+			entry.style.justifyContent = "center";
+			entry.style.alignItems = "center";
+			entry.style.fontSize = "2.5rem";
+			entry.style.transform = `translate(-50%, ${referenceEntryOffset + i * stepRem}rem)`;
+			const fontName = container.dataset.font;
+			if (fontName) entry.style.fontFamily = fontName;
+			const offset = i - 2;
+			const letterIndex = (wheelLetterIndex + offset + totalLetters) % totalLetters;
+			entry.textContent = letters[letterIndex];
+			container.appendChild(entry);
+			wheel.entries.push(entry);
+		}
+	});
+
+	const parent = document.getElementById("wheel2-main");
+	const entries = Array.from(parent.querySelectorAll(".wheel-main-entry"));
+	const totalHeight = entries.length * stepRem;
+	let basePositions = entries.map((_, i) => entryOffset + i * stepRem);
+	let currentIndices = entries.map((_, i) => i);
+	const centerIndex = 3;
+	entries.forEach((el, i) => {
+		el.style.position = "absolute";
+		el.style.left = "50%";
+		el.textContent = futharkLetters[currentIndices[i]];
+		el.style.transform = `translate(-50%, ${basePositions[i]}rem)`;
+		el.dataset.prevPos = basePositions[i];
+		if (i === centerIndex) { selectedLetter = el.textContent; selectedLetterElement = el; }
+	});
+
+	let isDragging = false;
+	let startY = 0;
+	let dragOffsetRem = 0;
+	const getLoopedPos = (pos) => ((pos - entryOffset) % totalHeight + totalHeight) % totalHeight + entryOffset;
+
+	function updatePositions(offset, isSnapping = false) {
+		if (freezeWheel) return;
+		const centerSlotPos = entryOffset + (3 * stepRem);
+		entries.forEach((el, i) => {
+			const rawPos = basePositions[i] + offset;
+			const loopedPos = getLoopedPos(rawPos);
+			const prev = parseFloat(el.dataset.prevPos);
+			const diff = loopedPos - prev;
+			if (diff < -totalHeight / 2) { currentIndices[i] = (currentIndices[i] + entries.length) % futharkLetters.length; el.textContent = futharkLetters[currentIndices[i]]; }
+			else if (diff > totalHeight / 2) { currentIndices[i] = (currentIndices[i] - entries.length + futharkLetters.length) % futharkLetters.length; el.textContent = futharkLetters[currentIndices[i]]; }
+			el.style.transform = `translate(-50%, ${loopedPos}rem)`;
+			el.dataset.prevPos = loopedPos;
+			if (isSnapping && Math.abs(loopedPos - centerSlotPos) < 0.1) { selectedLetter = el.textContent; selectedLetterElement = el; }
+		});
+	}
+
+	parent.addEventListener("pointerdown", e => { e.preventDefault(); isDragging = true; startY = e.clientY; entries.forEach(el => el.style.transition = "none"); parent.setPointerCapture(e.pointerId); });
+	parent.addEventListener("pointermove", e => { if (!isDragging) return; e.preventDefault(); const remSize = parseFloat(getComputedStyle(document.documentElement).fontSize); dragOffsetRem += (e.clientY - startY) / remSize; startY = e.clientY; updatePositions(dragOffsetRem); });
+
+	function snap() {
+		if (!isDragging) return;
+		isDragging = false;
+		const snappedDragOffset = Math.round(dragOffsetRem / stepRem) * stepRem;
+		entries.forEach((el, i) => {
+			const rawPos = basePositions[i] + snappedDragOffset;
+			const loopedPos = getLoopedPos(rawPos);
+			const currentTransformY = parseFloat(el.style.transform.split(',')[1]) || 0;
+			const distance = Math.abs(loopedPos - currentTransformY);
+			el.style.transition = distance > totalHeight / 2 ? "none" : "transform 0.2s cubic-bezier(.2, .7, .3, 1)";
+		});
+		updatePositions(snappedDragOffset, true);
+		basePositions = basePositions.map(pos => getLoopedPos(pos + snappedDragOffset));
+		dragOffsetRem = 0;
+	}
+	parent.addEventListener("pointerup", snap);
+	parent.addEventListener("pointercancel", snap);
+	parent.addEventListener("pointerleave", snap);
+})();
+
+// ── Wheel Level 3 (letter: s) ─────────────────────────────────────────────
+(function () {
+	const wheelLetter = "s";
+	let selectedLetter = "a";
+	let selectedLetterElement;
+	const wheelCheckButton = document.getElementById("wheel3-check-button");
+	const wheelNextButton  = document.getElementById("wheel3-next-btn");
+	let freezeWheel = false;
+
+	function showNextBtn() {
+		wheelNextButton.style.opacity = "0";
+		wheelNextButton.classList.remove("hidden");
+		requestAnimationFrame(() => requestAnimationFrame(() => {
+			wheelNextButton.style.transition = "opacity 0.6s ease";
+			wheelNextButton.style.opacity = "1";
+		}));
+	}
+
+	wheelCheckButton && wheelCheckButton.addEventListener("click", () => {
+		if (selectedLetter == wheelLetter) {
+			freezeWheel = true;
+			selectedLetterElement.style.transition = "";
+			applyGlow(selectedLetterElement, { className: "correct-glow" });
+			setTimeout(showNextBtn, 400);
+		} else {
+			selectedLetterElement.style.transition = "";
+			applyGlow(selectedLetterElement, { className: "wrong-glow", duration: 3000 });
+		}
+	});
+
+	wheelNextButton && wheelNextButton.addEventListener("click", () => {
+		switchPage(wheelNextButton.dataset.next, true);
+	});
+
+	const pageEl = document.getElementById("wheel3");
+	const referenceWheels = [
+		{ element: pageEl.querySelectorAll(".wheel-fixed")[0], letters: phoLetters, entries: [] },
+		{ element: pageEl.querySelectorAll(".wheel-fixed")[1], letters: greLetters, entries: [] },
+		{ element: pageEl.querySelectorAll(".wheel-fixed")[2], letters: itaLetters, entries: [] },
+		{ element: pageEl.querySelectorAll(".wheel-fixed")[3], letters: venLetters, entries: [] }
+	];
+
+	const stepRem = 4;
+	const entryOffset = -3.35;
+	const referenceEntryOffset = -1.0;
+
+	referenceWheels.forEach(wheel => {
+		const container = wheel.element;
+		container.innerHTML = "";
+		container.style.position = "relative";
+		container.style.overflow = "hidden";
+		const letters = wheel.letters;
+		const totalLetters = letters.length;
+		const wheelLetterIndex = letters.indexOf(wheelLetter);
+		if (wheelLetterIndex === -1) return;
+		for (let i = 0; i < 5; i++) {
+			const entry = document.createElement("div");
+			entry.className = "wheel-fixed-entry";
+			entry.style.position = "absolute";
+			entry.style.left = "50%";
+			entry.style.width = "100%";
+			entry.style.height = "2.5rem";
+			entry.style.paddingTop = "0.5rem";
+			entry.style.display = "flex";
+			entry.style.justifyContent = "center";
+			entry.style.alignItems = "center";
+			entry.style.fontSize = "2.5rem";
+			entry.style.transform = `translate(-50%, ${referenceEntryOffset + i * stepRem}rem)`;
+			const fontName = container.dataset.font;
+			if (fontName) entry.style.fontFamily = fontName;
+			const offset = i - 2;
+			const letterIndex = (wheelLetterIndex + offset + totalLetters) % totalLetters;
+			entry.textContent = letters[letterIndex];
+			container.appendChild(entry);
+			wheel.entries.push(entry);
+		}
+	});
+
+	const parent = document.getElementById("wheel3-main");
+	const entries = Array.from(parent.querySelectorAll(".wheel-main-entry"));
+	const totalHeight = entries.length * stepRem;
+	let basePositions = entries.map((_, i) => entryOffset + i * stepRem);
+	let currentIndices = entries.map((_, i) => i);
+	const centerIndex = 3;
+	entries.forEach((el, i) => {
+		el.style.position = "absolute";
+		el.style.left = "50%";
+		el.textContent = futharkLetters[currentIndices[i]];
+		el.style.transform = `translate(-50%, ${basePositions[i]}rem)`;
+		el.dataset.prevPos = basePositions[i];
+		if (i === centerIndex) { selectedLetter = el.textContent; selectedLetterElement = el; }
+	});
+
+	let isDragging = false;
+	let startY = 0;
+	let dragOffsetRem = 0;
+	const getLoopedPos = (pos) => ((pos - entryOffset) % totalHeight + totalHeight) % totalHeight + entryOffset;
+
+	function updatePositions(offset, isSnapping = false) {
+		if (freezeWheel) return;
+		const centerSlotPos = entryOffset + (3 * stepRem);
+		entries.forEach((el, i) => {
+			const rawPos = basePositions[i] + offset;
+			const loopedPos = getLoopedPos(rawPos);
+			const prev = parseFloat(el.dataset.prevPos);
+			const diff = loopedPos - prev;
+			if (diff < -totalHeight / 2) { currentIndices[i] = (currentIndices[i] + entries.length) % futharkLetters.length; el.textContent = futharkLetters[currentIndices[i]]; }
+			else if (diff > totalHeight / 2) { currentIndices[i] = (currentIndices[i] - entries.length + futharkLetters.length) % futharkLetters.length; el.textContent = futharkLetters[currentIndices[i]]; }
+			el.style.transform = `translate(-50%, ${loopedPos}rem)`;
+			el.dataset.prevPos = loopedPos;
+			if (isSnapping && Math.abs(loopedPos - centerSlotPos) < 0.1) { selectedLetter = el.textContent; selectedLetterElement = el; }
+		});
+	}
+
+	parent.addEventListener("pointerdown", e => { e.preventDefault(); isDragging = true; startY = e.clientY; entries.forEach(el => el.style.transition = "none"); parent.setPointerCapture(e.pointerId); });
+	parent.addEventListener("pointermove", e => { if (!isDragging) return; e.preventDefault(); const remSize = parseFloat(getComputedStyle(document.documentElement).fontSize); dragOffsetRem += (e.clientY - startY) / remSize; startY = e.clientY; updatePositions(dragOffsetRem); });
+
+	function snap() {
+		if (!isDragging) return;
+		isDragging = false;
+		const snappedDragOffset = Math.round(dragOffsetRem / stepRem) * stepRem;
+		entries.forEach((el, i) => {
+			const rawPos = basePositions[i] + snappedDragOffset;
+			const loopedPos = getLoopedPos(rawPos);
+			const currentTransformY = parseFloat(el.style.transform.split(',')[1]) || 0;
+			const distance = Math.abs(loopedPos - currentTransformY);
+			el.style.transition = distance > totalHeight / 2 ? "none" : "transform 0.2s cubic-bezier(.2, .7, .3, 1)";
+		});
+		updatePositions(snappedDragOffset, true);
+		basePositions = basePositions.map(pos => getLoopedPos(pos + snappedDragOffset));
+		dragOffsetRem = 0;
+	}
+	parent.addEventListener("pointerup", snap);
+	parent.addEventListener("pointercancel", snap);
+	parent.addEventListener("pointerleave", snap);
+})();
 
 // Functional stuff
 
@@ -864,62 +1087,61 @@ function resetVote() {
 	document.getElementById("vote-weiter").classList.remove("visible");
 }
 
-
 //Tile Animation
 (function () {
-	const COOLDOWN_MS = 2000;
-	const FLARE_DURATION_MS = 1800;
-	let running = false;  // guard against double-start
+    const COOLDOWN_MS = 2000;
+    const FLARE_DURATION_MS = 1800;
+    let running = false;  // guard against double-start
 
-	function fireRandomFlare() {
-		const page = document.getElementById('futhark');
-		if (!page || !page.classList.contains('active')) {
-			running = false;
-			return;
-		}
+    function fireRandomFlare() {
+        const page = document.getElementById('futhark');
+        if (!page || !page.classList.contains('active')) {
+            running = false;
+            return;
+        }
 
-		const tiles = Array.from(
-			document.querySelectorAll(
-				'#futhark .futhark-overview-grid-tile-wrapper:not(:has(.futhark-overview-grid-tile-disabled))'
-			)
-		);
-		if (!tiles.length) return;
+        const tiles = Array.from(
+            document.querySelectorAll(
+                '#futhark .futhark-overview-grid-tile-wrapper:not(:has(.futhark-overview-grid-tile-disabled))'
+            )
+        );
+        if (!tiles.length) return;
 
-		const tile = tiles[Math.floor(Math.random() * tiles.length)];
-		tile.classList.add('flare-active');
+        const tile = tiles[Math.floor(Math.random() * tiles.length)];
+        tile.classList.add('flare-active');
 
-		setTimeout(() => {
-			tile.classList.remove('flare-active');
-		}, FLARE_DURATION_MS);
+        setTimeout(() => {
+            tile.classList.remove('flare-active');
+        }, FLARE_DURATION_MS);
 
-		setTimeout(fireRandomFlare, FLARE_DURATION_MS + COOLDOWN_MS);
-	}
+        setTimeout(fireRandomFlare, FLARE_DURATION_MS + COOLDOWN_MS);
+    }
 
-	function startOnce() {
-		if (running) return;
-		running = true;
-		setTimeout(fireRandomFlare, 2500);
-	}
+    function startOnce() {
+        if (running) return;
+        running = true;
+        setTimeout(fireRandomFlare, 2500);
+    }
 
-	const page = document.getElementById('futhark');
-	setInterval(() => {
-		const isActive = page && page.classList.contains('active');
-		if (isActive) {
-			startOnce();
-		} else {
-			running = false;
-		}
-	}, 500);
+    const page = document.getElementById('futhark');
+    setInterval(() => {
+        const isActive = page && page.classList.contains('active');
+        if (isActive) {
+            startOnce();
+        } else {
+            running = false;
+        }
+    }, 500);
 })();
 
 // Counter-skew button text: wrap direct text nodes in a span
 document.querySelectorAll('.default-button, .origin-button').forEach(btn => {
-	btn.childNodes.forEach(node => {
-		if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
-			const span = document.createElement('span');
-			span.className = 'button-text';
-			span.textContent = node.textContent;
-			btn.replaceChild(span, node);
-		}
-	});
+    btn.childNodes.forEach(node => {
+        if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+            const span = document.createElement('span');
+            span.className = 'button-text';
+            span.textContent = node.textContent;
+            btn.replaceChild(span, node);
+        }
+    });
 });
